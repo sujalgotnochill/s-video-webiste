@@ -53,7 +53,9 @@ You can also open `index.html` directly in any modern browser.
 ## Current Status: Phase 1
 
 - **Implemented:**
-  - `index.html` (English homepage foundation)
+  - `index.html` (English homepage foundation with official brand icon in header and horizontal logo in footer)
+  - `assets/images/brand/s-video-creation-icon.png` (Official brand icon integrated in header)
+  - `assets/images/brand/s-video-creation-horizontal.png` (Official horizontal logo integrated in footer)
   - `css/tokens.css` (Design tokens: charcoal `#151515`, red `#E32636`, white `#FFFFFF`, grey `#929292`)
   - `css/reset.css` (Accessible reset, typography base, reduced-motion rules)
   - `css/layout.css` (Sticky glassmorphic header, mobile navigation drawer, containers, footer)
@@ -66,7 +68,6 @@ You can also open `index.html` directly in any modern browser.
   - Verified business telephone number.
   - Verified WhatsApp number and link.
   - Full studio address and operating hours in Katni, MP.
-  - Official business logo vector/PNG.
   - Genuine client portfolio video assets and previews.
   - Verified software inventory and price/licensing details.
   - Full Hindi translations (planned for Phase 6).
