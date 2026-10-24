@@ -573,3 +573,220 @@
   }
 }
 
+/* ==========================================================================
+   Portfolio Page & Category Filter Bar
+   ========================================================================== */
+
+.portfolio-filter-wrapper {
+  margin-bottom: var(--space-10);
+  display: flex;
+  justify-content: center;
+}
+
+.portfolio-filter-bar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 6px;
+  box-shadow: var(--shadow-sm);
+  max-width: 100%;
+}
+
+.portfolio-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-brand-grey);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.portfolio-filter-btn:hover {
+  color: var(--color-brand-white);
+  background-color: var(--color-bg-surface-elevated);
+}
+
+.portfolio-filter-btn:focus-visible {
+  outline: 2px solid var(--color-brand-red);
+  outline-offset: 2px;
+}
+
+.portfolio-filter-btn.active,
+.portfolio-filter-btn[aria-pressed="true"] {
+  background-color: var(--color-brand-red);
+  color: var(--color-brand-white);
+  border-color: var(--color-brand-red);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: 0 2px 10px rgba(227, 38, 54, 0.35);
+}
+
+.portfolio-card-item {
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.portfolio-card-item.is-hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Portfolio Split Layout (Horizontal on Left, Vertical on Right)
+   ========================================================================== */
+
+.portfolio-split-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .portfolio-split-layout {
+    grid-template-columns: minmax(0, 1.9fr) minmax(300px, 1.1fr);
+    gap: var(--space-8);
+  }
+}
+
+.portfolio-side-horizontal.is-full-width {
+  grid-column: 1 / -1;
+  max-width: 980px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.portfolio-side-vertical.is-centered {
+  grid-column: 1 / -1;
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.portfolio-side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.portfolio-side-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.portfolio-side-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-white);
+  letter-spacing: -0.01em;
+}
+
+.portfolio-side-count {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Horizontal Grid: 2-column grid of 16:9 cards */
+.portfolio-horizontal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .portfolio-horizontal-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Vertical Grid: 1-column (or 2-column when centered or on tablet) of 9:16 cards */
+.portfolio-vertical-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .portfolio-vertical-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.portfolio-side-vertical.is-centered .portfolio-vertical-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Vertical Media Box & Card Alignment (9:16 Mobile Viewport) */
+.portfolio-media-box--vertical {
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-width: 250px;
+  margin: var(--space-4) auto var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.portfolio-vertical-grid .portfolio-placeholder-card {
+  text-align: center;
+}
+
+.portfolio-vertical-grid .portfolio-card-content {
+  align-items: center;
+  text-align: center;
+}
+
+/* Portfolio Empty State */
+.portfolio-empty-state {
+  text-align: center;
+  padding: var(--space-16) var(--space-6);
+  background-color: var(--color-bg-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  max-width: 580px;
+  margin: var(--space-8) auto;
+}
+
+.portfolio-empty-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--color-brand-grey);
+  margin-bottom: var(--space-4);
+  opacity: 0.6;
+}
+
+.portfolio-empty-title {
+  font-size: var(--text-lg);
+  color: var(--color-brand-white);
+  margin-bottom: var(--space-2);
+}
+
+.portfolio-empty-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-filter-btn,
+  .portfolio-card-item {
+    transition: none !important;
+  }
+}
