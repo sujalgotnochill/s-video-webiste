@@ -162,6 +162,15 @@
   transition: all var(--transition-fast);
   cursor: pointer;
   line-height: 1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-btn:not(.active):not(.disabled):hover {
+  color: var(--color-brand-white);
+  background-color: var(--color-bg-surface-hover);
 }
 
 .lang-btn.active {

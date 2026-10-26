@@ -85,4 +85,94 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- ======================================================================
+       Hindi Routes (Stage 6 Localization)
+       ====================================================================== -->
+
+  <!-- Hindi Homepage -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Hindi Services Hub -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hindi Service Subpages -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/video-editing/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/reels-promotional-videos/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/video-mixing/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/data-recovery/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/software-sales/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/services/wedding-event-video/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Hindi Portfolio Showcase -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/portfolio/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hindi Products & Equipment Catalogue -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/products/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hindi Studio About Page -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/about/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Hindi Contact & Location Hub -->
+  <url>
+    <loc>https://svideocreation.netlify.app/hi/contact/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

@@ -141,3 +141,27 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* Devanagari typography support for Hindi */
+:lang(hi) {
+  font-family: var(--font-family-devanagari);
+}
+
+:lang(hi) h1,
+:lang(hi) h2,
+:lang(hi) h3,
+:lang(hi) h4,
+:lang(hi) h5,
+:lang(hi) h6 {
+  font-family: var(--font-family-devanagari);
+  letter-spacing: normal;
+  line-height: 1.35;
+}
+
+:lang(hi) p,
+:lang(hi) li,
+:lang(hi) span,
+:lang(hi) a {
+  overflow-wrap: break-word;
+}
+

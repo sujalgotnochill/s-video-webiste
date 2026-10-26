@@ -62,12 +62,28 @@ function highlightDedicatedPageNav() {
 
   if (!activeKey) return;
 
+  const keywordsMap = {
+    portfolio: ['portfolio', 'पोर्टफोलियो'],
+    products: ['product', 'प्रोडक्ट्स', 'उत्पाद'],
+    services: ['service', 'सेवाएं', 'सेवाओं', 'सेवा'],
+    about: ['about', 'परिचय', 'स्टूडियो'],
+    contact: ['contact', 'संपर्क']
+  };
+
+  const activeTerms = keywordsMap[activeKey] || [activeKey];
+
   [desktopLinks, mobileLinks].forEach((links) => {
     links.forEach((link) => {
       const href = (link.getAttribute('href') || '').toLowerCase();
       const text = (link.textContent || '').trim().toLowerCase();
 
-      const isMatch = href.includes(activeKey) || text.startsWith(activeKey);
+      // Match by href keyword, text matching any active term, or exact self link (./ on hub or ../ on subservice)
+      const matchesHref = href.includes(activeKey);
+      const matchesText = activeTerms.some(term => text.includes(term) || text.startsWith(term));
+      const isHubSelfLink = (href === './' || href === '') && !path.includes('/video-editing') && !path.includes('/reels') && !path.includes('/video-mixing') && !path.includes('/data-recovery') && !path.includes('/software-sales') && !path.includes('/wedding');
+      const isSubpageParentLink = activeKey === 'services' && (href === '../' || href === '../../services/' || href === '../../../services/');
+
+      const isMatch = matchesHref || matchesText || (isHubSelfLink && matchesText) || (isSubpageParentLink && matchesText);
       if (isMatch) {
         link.classList.add('active');
         link.setAttribute('aria-current', 'page');

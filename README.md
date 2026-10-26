@@ -42,8 +42,9 @@ All contact and location details have been verified and integrated into the site
 
 ## Implemented Pages & Routes
 
-The website consists of 12 fully implemented, standalone static HTML pages:
+The website consists of **24 fully implemented, standalone static HTML pages** across English and Hindi, plus a custom 404 error page:
 
+### English Routes (`lang="en"`)
 | Page | URL Path | Description |
 |------|----------|-------------|
 | **Home** | `/` (`index.html`) | Full studio introduction, service highlights, portfolio preview, products scope, studio about section, and contact hub. |
@@ -58,9 +59,28 @@ The website consists of 12 fully implemented, standalone static HTML pages:
 | **Products Catalogue** | `/products/` | Product and equipment showcase with sticky category navigation and direct WhatsApp enquiries. |
 | **About Page** | `/about/` | Dedicated studio profile, core pillars, 6 confirmed service areas, products scope, and portfolio links. |
 | **Contact Page** | `/contact/` | Dedicated contact hub with verified telephone, WhatsApp, studio address in Katni, and Google Maps directions. |
+
+### Hindi Routes (`lang="hi"`)
+| Page | URL Path | Description |
+|------|----------|-------------|
+| **होमपेज (Home)** | `/hi/` (`hi/index.html`) | स्टूडियो परिचय, प्रमुख सेवाएं, पोर्टफोलियो झलक, सॉफ्टवेयर व हार्डवेयर कैटलॉग, और संपर्क हब। |
+| **सेवाएं (Services)** | `/hi/services/` | सभी 6 निश्चित सेवा श्रेणियों का विस्तृत अवलोकन, कार्यप्रणाली व तकनीकी परामर्श। |
+| **वीडियो एडिटिंग** | `/hi/services/video-editing/` | कथात्मक टाइमलाइन संपादन, कलर ग्रेडिंग, ऑडियो बैलेंसिंग और वीडियो आउटपुट। |
+| **रील्स व प्रोमो वीडियो** | `/hi/services/reels-promotional-videos/` | 9:16 वर्टिकल शॉर्ट-फॉर्म वीडियो, इंस्टाग्राम रील्स और प्रमोशनल टीज़र संपादन। |
+| **वीडियो मिक्सिंग** | `/hi/services/video-mixing/` | मल्टी-कैमरा एंगल सिंक्रोनाइज़ेशन, विवाह व आयोजन मिक्सिंग और लाइव स्विचिंग। |
+| **डेटा रिकवरी** | `/hi/services/data-recovery/` | कैमरा एसडी कार्ड, हार्ड ड्राइव, एसएसडी व पेन ड्राइव की इन-स्टूडियो डायग्नोस्टिक रिकवरी। |
+| **सॉफ्टवेयर सेल्स** | `/hi/services/software-sales/` | EDIUS, Premiere Pro, Monarch, Album Express व Album Guru सॉफ्टवेयर कंसल्टेशन। |
+| **विवाह व मांगलिक वीडियो** | `/hi/services/wedding-event-video/` | मांगलिक अनुष्ठान कवरेज, सिनेमैटिक वेडिंग टीज़र और पारिवारिक आयोजन वीडियोग्राफी। |
+| **पोर्टफोलियो** | `/hi/portfolio/` | बिना पेज रीलोड किए तुरंत फ़िल्टर होने वाला रचनात्मक कार्य शोकेस। |
+| **प्रोडक्ट्स कैटलॉग** | `/hi/products/` | स्टिकी श्रेणी नेविगेशन के साथ प्रमाणित वीडियो सॉफ्टवेयर व उपकरण कैटलॉग। |
+| **स्टूडियो परिचय** | `/hi/about/` | "The Edit Station" कटनी का परिचय, 6 कार्यक्षेत्र, व्यावसायिक मानक और संसाधन। |
+| **संपर्क व पता** | `/hi/contact/` | गोल बाजार कटनी स्थित स्टूडियो का पता, गूगल मैप्स, फोन (+91 94251 58458) व व्हाट्सएप लिंक। |
+
+| Utility | URL Path | Description |
+|---------|----------|-------------|
 | **Custom 404** | `/404.html` | Accessible, branded error page with recovery navigation links. |
 
-*Desktop and mobile navigation seamlessly reach dedicated pages across all routes, with in-page scroll navigation preserved on the homepage.*
+*All 24 pages feature functional bidirectional language switching (`EN` &harr; `HI`) connecting equivalent counterparts directly, reciprocal `hreflang="en-IN"`, `hreflang="hi-IN"`, and `hreflang="x-default"` tags, and full Devanagari typography support.*
 
 ---
 
@@ -68,13 +88,13 @@ The website consists of 12 fully implemented, standalone static HTML pages:
 
 - **Markup:** Semantic HTML5 with landmark regions (`header`, `main`, `nav`, `section`, `footer`) and accessibility features (`aria-current`, `aria-expanded`, skip links).
 - **Styling:** Vanilla CSS3 organized into a design token architecture:
-  - `css/tokens.css` — Color tokens (`#151515`, `#E32636`, `#929292`, `#FFFFFF`), typography, spacing, transitions, and shadows.
-  - `css/reset.css` — Modern CSS reset, base font-size, reduced-motion preferences, scroll padding.
+  - `css/tokens.css` — Color tokens (`#151515`, `#E32636`, `#929292`, `#FFFFFF`), typography (`Plus Jakarta Sans` & `Noto Sans Devanagari`), spacing, transitions, and shadows.
+  - `css/reset.css` — Modern CSS reset, base font-size, reduced-motion preferences, scroll padding, and `:lang(hi)` line-height / letter-spacing adjustments for Devanagari conjuncts and matras.
   - `css/layout.css` — Sticky glassmorphic header, mobile navigation drawer, containers, and footer.
-  - `css/components.css` — Reusable cards, buttons, badges, advisory boxes, and breadcrumbs.
+  - `css/components.css` — Reusable cards, buttons, badges, advisory boxes, breadcrumbs, and interactive language switcher buttons.
   - `css/pages.css` — Dedicated layout styles for hero sections, grids, portfolio split layout, and products catalogue.
 - **Interactions:** Vanilla JavaScript (`js/main.js`):
-  - IntersectionObserver + focal-point scroll-spy navigation for desktop and mobile nav highlighting.
+  - IntersectionObserver + focal-point scroll-spy navigation for desktop and mobile nav highlighting with bilingual keyword awareness.
   - Accessible mobile drawer toggle with ESC key dismissal and outside click detection.
   - Portfolio category filtering (instant DOM filtering with zero reload).
   - Products sticky category quick-jump navigation.
@@ -86,7 +106,7 @@ The website consists of 12 fully implemented, standalone static HTML pages:
 ## Launch Essentials
 
 - `robots.txt` — Grants full crawler access and links to the XML sitemap.
-- `sitemap.xml` — Valid XML sitemap indexing all 10 verified routes using the temporary deployment URL `https://svideocreation.netlify.app/`.
+- `sitemap.xml` — Valid XML sitemap indexing all 24 verified public routes (12 English + 12 Hindi) using the deployment URL `https://svideocreation.netlify.app/`.
 - `404.html` — Custom error page matching studio branding with direct links back to all key pages.
 - `netlify.toml` — Static deployment configuration with security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`) and asset caching rules.
 
@@ -101,7 +121,7 @@ Since the site consists entirely of standard HTML, CSS, and JavaScript files, it
 # From the repository root (F:\S video Website\s-video-webiste\):
 python -m http.server 8080
 ```
-Then navigate to: [http://localhost:8080](http://localhost:8080)
+Then navigate to: [http://localhost:8080](http://localhost:8080) (English) or [http://localhost:8080/hi/](http://localhost:8080/hi/) (Hindi)
 
 ### Option 2: Node.js / npx
 ```bash
@@ -109,19 +129,18 @@ npx -y serve .
 ```
 
 ### Option 3: Direct File Preview
-Open `index.html` directly in any modern desktop or mobile browser.
+Open `index.html` or `hi/index.html` directly in any modern desktop or mobile browser.
 
 ---
 
 ## Outstanding Work & Next Phases
 
-In accordance with `PROJECT_RULES.md`, the following items remain for subsequent phases:
+In accordance with `PROJECT_RULES.md`, the following items remain for subsequent review and phases:
 
-1. **Phase 6 — Hindi Translations (`/hi/`):**
-   Full, natural Devanagari Hindi pages for the homepage, services, portfolio, products, about, and contact once translations are confirmed. The language switcher currently indicates Hindi is planned for Phase 6.
-2. **Dedicated `/about/` and `/contact/` Standalone Pages (Completed in Stage 5):**
-   Fully built and integrated into the site architecture with dedicated navigation, mobile drawer support, and accurate studio facts.
-3. **Customer Media Asset Delivery:**
+1. **Owner Hindi Translation Review:**
+   All 12 Hindi pages have been translated into natural, professional Hindi suited for Madhya Pradesh customers while preserving Latin trade names (`S. Video Creation`, `The Edit Station`, `EDIUS 11`, `Adobe Premiere Pro`, `Monarch SmartCut Pro`, `Album Express`, `Album Guru AI`, `JUMBO PACK+`, `Dgflick`). The studio owner may review colloquial preferences (e.g., preferred Hindi phrasing for technical video mixing terms).
+2. **Customer Media Asset Delivery:**
    Portfolio and service previews currently use tasteful SVG and CSS presentation cards. Real customer video samples and video thumbnails can be dropped in once supplied and approved by the owner.
-4. **Production Domain Finalization:**
-   The site is currently configured for Netlify preview deployment (`https://svideocreation.netlify.app/`). Connecting a custom domain (e.g. `svideocreation.com` or `svideocreation.in`) awaits owner registration and approval.
+3. **Production Domain Finalization & Canonical Tags:**
+   The site is currently configured for Netlify preview deployment (`https://svideocreation.netlify.app/`). In accordance with `PROJECT_RULES.md`, canonical tags remain deliberately absent to prevent indexing conflicts until the owner finalizes a custom production domain (`svideocreation.in` or `svideocreation.com`).
+
