@@ -867,3 +867,428 @@
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   Products Catalogue & Equipment Showcase Page
+   Follows PROJECT_RULES.md design tokens and enquiry catalogue requirements
+   ========================================================================== */
+
+/* Sticky Category Quick Navigation Bar */
+.catalogue-nav-sticky {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 80;
+  background-color: var(--color-bg-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) 0;
+  transition: all var(--transition-fast);
+}
+
+.catalogue-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 2px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.catalogue-nav-bar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .catalogue-nav-bar {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.catalogue-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-surface);
+  color: var(--color-brand-grey);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  min-height: 38px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.catalogue-nav-btn:hover {
+  color: var(--color-brand-white);
+  border-color: var(--color-border-hover);
+  background-color: var(--color-bg-surface-elevated);
+}
+
+.catalogue-nav-btn:focus-visible {
+  outline: 2px solid var(--color-brand-red);
+  outline-offset: 2px;
+}
+
+.catalogue-nav-btn.active,
+.catalogue-nav-btn[aria-current="true"] {
+  background-color: var(--color-brand-red);
+  color: var(--color-brand-white);
+  border-color: var(--color-brand-red);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: 0 2px 10px rgba(227, 38, 54, 0.35);
+}
+
+/* Category Sections */
+.catalogue-section {
+  padding-top: var(--space-12);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid var(--color-border-subtle);
+  scroll-margin-top: calc(var(--header-height) + 60px);
+}
+
+.catalogue-category-header {
+  margin-bottom: var(--space-8);
+}
+
+.catalogue-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand-red);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
+}
+
+.catalogue-category-badge::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-brand-red);
+}
+
+.catalogue-category-title {
+  font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
+  color: var(--color-brand-white);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-3);
+  letter-spacing: -0.02em;
+}
+
+.catalogue-category-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+/* Grids */
+.catalogue-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .catalogue-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .catalogue-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .catalogue-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .catalogue-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Individual Product / Equipment Card */
+.catalogue-card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+
+.catalogue-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(227, 38, 54, 0.45);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 20px rgba(227, 38, 54, 0.12);
+}
+
+/* Visual Panel Header (Tasteful CSS Replacement for Missing Imagery) */
+.catalogue-card-banner {
+  height: 110px;
+  background: radial-gradient(circle at 85% 20%, rgba(227, 38, 54, 0.12) 0%, transparent 65%),
+              linear-gradient(180deg, #1D1D22 0%, #161619 100%);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+
+.catalogue-card-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(227, 38, 54, 0.4), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.catalogue-card:hover .catalogue-card-banner::after {
+  opacity: 1;
+}
+
+.catalogue-card-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(21, 21, 21, 0.85);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-brand-red);
+  box-shadow: inset 0 0 12px rgba(227, 38, 54, 0.12);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.catalogue-card:hover .catalogue-card-icon-wrap {
+  border-color: rgba(227, 38, 54, 0.5);
+  transform: scale(1.05);
+}
+
+.catalogue-card-banner-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.catalogue-brand-badge {
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-brand-red);
+  background-color: var(--color-brand-red-subtle);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(227, 38, 54, 0.3);
+}
+
+/* Card Content */
+.catalogue-card-content {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.catalogue-card-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-white);
+  margin-bottom: var(--space-2);
+  line-height: 1.3;
+}
+
+.catalogue-card-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: var(--space-4);
+}
+
+/* Chips List */
+.catalogue-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  margin-bottom: var(--space-4);
+}
+
+.catalogue-chip {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  line-height: 1.2;
+}
+
+/* Specific Callout for Product Clarification (e.g., SmartCut Pro is software) */
+.catalogue-clarification-box {
+  font-size: 0.75rem;
+  color: #E6A23C;
+  background-color: rgba(255, 179, 0, 0.08);
+  border-left: 3px solid #E6A23C;
+  padding: 6px 10px;
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  margin-bottom: var(--space-4);
+  line-height: 1.45;
+}
+
+/* Card Footer */
+.catalogue-card-footer {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border-subtle);
+  background-color: rgba(21, 21, 21, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.catalogue-availability-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.catalogue-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #E6A23C;
+  font-weight: var(--font-weight-medium);
+}
+
+.catalogue-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: #E6A23C;
+  box-shadow: 0 0 6px rgba(230, 162, 60, 0.6);
+}
+
+/* Related Data Recovery Service Panel */
+.data-recovery-panel {
+  background: radial-gradient(circle at 10% 50%, rgba(227, 38, 54, 0.08) 0%, transparent 50%),
+              var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-brand-red);
+  border-radius: var(--radius-md);
+  padding: var(--space-8);
+  margin: var(--space-12) 0;
+  box-shadow: var(--shadow-md);
+}
+
+.data-recovery-panel-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .data-recovery-panel-inner {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+.data-recovery-panel-title {
+  font-size: var(--text-2xl);
+  color: var(--color-brand-white);
+  margin-bottom: var(--space-3);
+}
+
+.data-recovery-panel-lead {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-5);
+}
+
+.data-recovery-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--space-5);
+}
+
+.data-recovery-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 6px 12px;
+  background-color: var(--color-bg-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-brand-white);
+}
+
+.data-recovery-chip svg {
+  color: var(--color-brand-red);
+  flex-shrink: 0;
+}
+
+.data-recovery-disclaimer {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
+  font-style: italic;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.data-recovery-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) and (max-width: 991px) {
+  .data-recovery-actions {
+    flex-direction: row;
+  }
+}
+
+/* Reduced Motion preferences for catalogue */
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-nav-btn,
+  .catalogue-card,
+  .catalogue-card-icon-wrap {
+    transition: none !important;
+  }
+}
+

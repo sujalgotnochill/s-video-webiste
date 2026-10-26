@@ -7,9 +7,268 @@
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNavigation();
   initHeaderScrollState();
+  initActiveNavigation();
   initPlaceholderInteractions();
   initPortfolioFilters();
+  initCatalogueNav();
 });
+
+/**
+ * Active Navigation Highlighting & ScrollSpy
+ * Handles:
+ * - Dedicated page URL detection (/portfolio/, /services/, /products/)
+ * - Homepage IntersectionObserver scroll-spy for #top, #services, #portfolio, #products, #about, #contact
+ * - Top of page & bottom of page edge cases
+ * - Manual link clicking with smooth-scroll & temporary scroll-spy lock
+ * - Direct page load and browser refresh with hash support
+ * - Synchronized desktop (.nav-link) and mobile (.mobile-nav-link) state
+ * - ARIA aria-current="page" (dedicated pages / home) and aria-current="true" (homepage sections)
+ * - prefers-reduced-motion support
+ */
+function initActiveNavigation() {
+  const isHomepage = !!document.querySelector('.hero-section') &&
+                     !!document.getElementById('services') &&
+                     !!document.getElementById('portfolio');
+
+  if (!isHomepage) {
+    highlightDedicatedPageNav();
+    return;
+  }
+
+  initHomepageScrollTracking();
+}
+
+/**
+ * Dedicated Page Navigation Active State
+ * Sets active state and aria-current="page" based on URL path
+ */
+function highlightDedicatedPageNav() {
+  const path = window.location.pathname.toLowerCase();
+  const desktopLinks = document.querySelectorAll('.site-nav .nav-link');
+  const mobileLinks = document.querySelectorAll('.mobile-nav-drawer .mobile-nav-link');
+
+  let activeKey = null;
+  if (path.includes('/portfolio')) {
+    activeKey = 'portfolio';
+  } else if (path.includes('/products')) {
+    activeKey = 'products';
+  } else if (path.includes('/services')) {
+    activeKey = 'services';
+  }
+
+  if (!activeKey) return;
+
+  [desktopLinks, mobileLinks].forEach((links) => {
+    links.forEach((link) => {
+      const href = (link.getAttribute('href') || '').toLowerCase();
+      const text = (link.textContent || '').trim().toLowerCase();
+
+      const isMatch = href.includes(activeKey) || text.startsWith(activeKey);
+      if (isMatch) {
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.classList.remove('active');
+        link.removeAttribute('aria-current');
+      }
+    });
+  });
+}
+
+/**
+ * Homepage Scroll-Spy & In-Page Section Tracking
+ * Uses IntersectionObserver API with header offset and edge-case protection
+ */
+function initHomepageScrollTracking() {
+  const sectionConfigs = [
+    { id: 'top', targetEl: document.querySelector('.hero-section') || document.getElementById('top'), hash: '#top' },
+    { id: 'services', targetEl: document.getElementById('services'), hash: '#services' },
+    { id: 'portfolio', targetEl: document.getElementById('portfolio'), hash: '#portfolio' },
+    { id: 'products', targetEl: document.getElementById('products'), hash: '#products' },
+    { id: 'about', targetEl: document.getElementById('about'), hash: '#about' },
+    { id: 'contact', targetEl: document.getElementById('contact'), hash: '#contact' }
+  ].filter(item => !!item.targetEl);
+
+  if (!sectionConfigs.length) return;
+
+  let isManualScrolling = false;
+  let manualScrollTimeout = null;
+
+  const desktopLinks = document.querySelectorAll('.site-nav .nav-link');
+  const mobileLinks = document.querySelectorAll('.mobile-nav-drawer .mobile-nav-link');
+
+  function setActiveNav(targetHash) {
+    [desktopLinks, mobileLinks].forEach((links) => {
+      links.forEach((link) => {
+        const href = link.getAttribute('href');
+        const isMatch = href === targetHash;
+        if (isMatch) {
+          link.classList.add('active');
+          link.setAttribute('aria-current', targetHash === '#top' ? 'page' : 'true');
+        } else {
+          link.classList.remove('active');
+          link.removeAttribute('aria-current');
+        }
+      });
+    });
+  }
+
+  function getHeaderHeight() {
+    const header = document.querySelector('.site-header');
+    return header ? header.offsetHeight : 72;
+  }
+
+  function updateActiveSection() {
+    if (isManualScrolling) return;
+
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    const headerHeight = getHeaderHeight();
+
+    // 1. Top of page edge case: activate Home (#top)
+    if (scrollY < 80) {
+      setActiveNav('#top');
+      return;
+    }
+
+    // 2. Bottom of page edge case: activate the last section (#contact) even if short
+    if (windowHeight + scrollY >= docHeight - 50) {
+      const lastItem = sectionConfigs[sectionConfigs.length - 1];
+      if (lastItem) {
+        setActiveNav(lastItem.hash);
+        return;
+      }
+    }
+
+    // 3. Focal zone calculation below the sticky header
+    // Calculates which section currently occupies the upper reading area below the sticky header
+    const focalOffset = Math.max(headerHeight + 130, Math.min(windowHeight * 0.4, 280));
+    let activeItem = sectionConfigs[0];
+
+    for (let i = 0; i < sectionConfigs.length; i++) {
+      const item = sectionConfigs[i];
+      const rect = item.targetEl.getBoundingClientRect();
+      if (rect.top <= focalOffset) {
+        activeItem = item;
+      } else {
+        break;
+      }
+    }
+
+    if (activeItem) {
+      setActiveNav(activeItem.hash);
+    }
+  }
+
+  // Primary IntersectionObserver tracking
+  if ('IntersectionObserver' in window) {
+    const headerHeight = getHeaderHeight();
+    const observer = new IntersectionObserver(() => {
+      if (!isManualScrolling) {
+        updateActiveSection();
+      }
+    }, {
+      rootMargin: `-${headerHeight}px 0px -45% 0px`,
+      threshold: [0, 0.2, 0.5, 0.8]
+    });
+
+    sectionConfigs.forEach(item => observer.observe(item.targetEl));
+  }
+
+  // Passive requestAnimationFrame scroll listener for real-time smoothness
+  let scrollTicking = false;
+  window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+      window.requestAnimationFrame(() => {
+        updateActiveSection();
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  // Handle window resizing / orientation change
+  window.addEventListener('resize', () => {
+    updateActiveSection();
+  }, { passive: true });
+
+  // Unlock manual scroll lock if user wheels or touches
+  window.addEventListener('wheel', () => { isManualScrolling = false; }, { passive: true });
+  window.addEventListener('touchstart', () => { isManualScrolling = false; }, { passive: true });
+
+  // Handle manual in-page navigation clicks with smooth scrolling
+  const inPageLinks = document.querySelectorAll('.site-nav a[href^="#"], .mobile-nav-drawer a[href^="#"], .brand-logo-link[href="#top"], .footer-links a[href="#top"], .header-actions a[href="#contact"]');
+  inPageLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const href = link.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+
+      const targetId = href.substring(1);
+      const targetEl = targetId === 'top'
+        ? (document.querySelector('.hero-section') || document.getElementById('top'))
+        : document.getElementById(targetId);
+
+      if (targetEl) {
+        event.preventDefault();
+
+        // Immediately update active styling
+        setActiveNav(href);
+
+        // Lock scroll-spy while smooth scrolling takes place
+        isManualScrolling = true;
+        clearTimeout(manualScrollTimeout);
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+        if (targetId === 'top') {
+          window.scrollTo({ top: 0, behavior });
+        } else {
+          targetEl.scrollIntoView({ behavior, block: 'start' });
+        }
+
+        if (history.pushState) {
+          history.pushState(null, '', href);
+        } else {
+          window.location.hash = href;
+        }
+
+        const duration = prefersReducedMotion ? 50 : 800;
+        manualScrollTimeout = setTimeout(() => {
+          isManualScrolling = false;
+          updateActiveSection();
+        }, duration);
+      }
+    });
+  });
+
+  // Handle browser back/forward buttons
+  window.addEventListener('popstate', () => {
+    if (window.location.hash) {
+      const matching = sectionConfigs.find(item => item.hash === window.location.hash);
+      if (matching) {
+        setActiveNav(matching.hash);
+      } else {
+        updateActiveSection();
+      }
+    } else {
+      setActiveNav('#top');
+    }
+  });
+
+  // Handle initial page load or browser refresh with hash
+  if (window.location.hash) {
+    const matching = sectionConfigs.find(item => item.hash === window.location.hash);
+    if (matching) {
+      setActiveNav(matching.hash);
+    } else {
+      updateActiveSection();
+    }
+  } else {
+    updateActiveSection();
+  }
+}
 
 /**
  * Mobile Navigation Drawer Setup
@@ -267,3 +526,50 @@ function initPortfolioFilters() {
     });
   });
 }
+
+/**
+ * Products Catalogue Category Navigation Setup
+ * Provides accessible category jumping, active pill state management, and scroll spy
+ */
+function initCatalogueNav() {
+  const navBtns = document.querySelectorAll('.catalogue-nav-btn');
+  const sections = document.querySelectorAll('.catalogue-section, #related-data-recovery');
+
+  if (!navBtns.length || !sections.length) return;
+
+  function setActiveBtn(targetId) {
+    navBtns.forEach((btn) => {
+      const href = btn.getAttribute('href');
+      const isMatch = href === `#${targetId}`;
+      btn.classList.toggle('active', isMatch);
+      btn.setAttribute('aria-current', isMatch ? 'true' : 'false');
+    });
+  }
+
+  // Smooth scroll and active state on click
+  navBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('href')?.replace('#', '');
+      if (targetId) {
+        setActiveBtn(targetId);
+      }
+    });
+  });
+
+  // ScrollSpy via IntersectionObserver
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveBtn(entry.target.id);
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    });
+
+    sections.forEach((sec) => observer.observe(sec));
+  }
+}
+
