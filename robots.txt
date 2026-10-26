@@ -1,0 +1,8 @@
+# robots.txt for S. Video Creation
+# Production deployment: https://svideocreation.netlify.app/
+
+User-agent: *
+Allow: /
+
+# XML Sitemap location
+Sitemap: https://svideocreation.netlify.app/sitemap.xml
