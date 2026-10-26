@@ -1292,3 +1292,39 @@
   }
 }
 
+/* Devanagari Typography Refinements */
+:lang(hi) .hero-headline {
+  letter-spacing: normal;
+  line-height: 1.25;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+:lang(hi) .subpage-hero-title,
+:lang(hi) .section-title {
+  letter-spacing: normal;
+  line-height: 1.3;
+}
+
+:lang(hi) .card-title,
+:lang(hi) .service-card-title,
+:lang(hi) .catalogue-card-title,
+:lang(hi) .about-feature-title {
+  letter-spacing: normal;
+  line-height: 1.35;
+}
+
+:lang(hi) .hero-subhead,
+:lang(hi) .section-description,
+:lang(hi) .service-card-desc,
+:lang(hi) .catalogue-card-desc {
+  line-height: 1.65;
+}
+
+:lang(hi) .catalogue-nav-btn {
+  font-size: var(--text-xs);
+  letter-spacing: normal;
+  padding: 0.55rem 0.9rem;
+}
+
+
