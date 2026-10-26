@@ -54,6 +54,10 @@ function highlightDedicatedPageNav() {
     activeKey = 'products';
   } else if (path.includes('/services')) {
     activeKey = 'services';
+  } else if (path.includes('/about')) {
+    activeKey = 'about';
+  } else if (path.includes('/contact')) {
+    activeKey = 'contact';
   }
 
   if (!activeKey) return;

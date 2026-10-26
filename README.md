@@ -42,7 +42,7 @@ All contact and location details have been verified and integrated into the site
 
 ## Implemented Pages & Routes
 
-The website consists of 10 fully implemented, standalone static HTML pages:
+The website consists of 12 fully implemented, standalone static HTML pages:
 
 | Page | URL Path | Description |
 |------|----------|-------------|
@@ -56,9 +56,11 @@ The website consists of 10 fully implemented, standalone static HTML pages:
 | **Wedding & Event Video** | `/services/wedding-event-video/` | Ceremonial and wedding video production packages and deliverables. |
 | **Portfolio** | `/portfolio/` | Creative showcase with interactive category filtering (All, Wedding & Events, Reels & Promos, Video Mixing). |
 | **Products Catalogue** | `/products/` | Product and equipment showcase with sticky category navigation and direct WhatsApp enquiries. |
+| **About Page** | `/about/` | Dedicated studio profile, core pillars, 6 confirmed service areas, products scope, and portfolio links. |
+| **Contact Page** | `/contact/` | Dedicated contact hub with verified telephone, WhatsApp, studio address in Katni, and Google Maps directions. |
 | **Custom 404** | `/404.html` | Accessible, branded error page with recovery navigation links. |
 
-*About and Contact links currently navigate to verified anchor sections on the homepage (`/#about` and `/#contact`).*
+*Desktop and mobile navigation seamlessly reach dedicated pages across all routes, with in-page scroll navigation preserved on the homepage.*
 
 ---
 
@@ -116,9 +118,9 @@ Open `index.html` directly in any modern desktop or mobile browser.
 In accordance with `PROJECT_RULES.md`, the following items remain for subsequent phases:
 
 1. **Phase 6 — Hindi Translations (`/hi/`):**
-   Full, natural Devanagari Hindi pages for the homepage, services, portfolio, and products once translations are confirmed. The language switcher currently indicates Hindi is planned for Phase 6.
-2. **Dedicated `/about/` and `/contact/` Standalone Pages:**
-   Currently handled via in-page sections on the homepage (`/#about` and `/#contact`). If standalone `/about/` and `/contact/` pages are desired by the owner, they can be created as separate routes.
+   Full, natural Devanagari Hindi pages for the homepage, services, portfolio, products, about, and contact once translations are confirmed. The language switcher currently indicates Hindi is planned for Phase 6.
+2. **Dedicated `/about/` and `/contact/` Standalone Pages (Completed in Stage 5):**
+   Fully built and integrated into the site architecture with dedicated navigation, mobile drawer support, and accurate studio facts.
 3. **Customer Media Asset Delivery:**
    Portfolio and service previews currently use tasteful SVG and CSS presentation cards. Real customer video samples and video thumbnails can be dropped in once supplied and approved by the owner.
 4. **Production Domain Finalization:**
