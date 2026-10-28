@@ -126,37 +126,72 @@ comment on table public.portfolio_items is 'S. Video Creation portfolio records 
 
 -- Idempotent constraint upgrade block for existing tables
 do $$
+declare
+  v_invalid_video_ids integer;
+  v_invalid_urls integer;
+  v_invalid_thumbs integer;
+  v_invalid_titles integer;
 begin
-  -- 1. Constrain youtube_video_id strictly to 11 characters: letters, digits, underscore, hyphen
-  alter table public.portfolio_items drop constraint if exists portfolio_items_youtube_video_id_check;
-  alter table public.portfolio_items add constraint portfolio_items_youtube_video_id_check
-    check (youtube_video_id ~ '^[a-zA-Z0-9_-]{11}$');
+  -- 1. Check for existing data violations and report detailed, visible errors if found
+  select count(*) into v_invalid_video_ids
+  from public.portfolio_items
+  where youtube_video_id !~ '^[a-zA-Z0-9_-]{11}$';
 
-  -- 2. Drop legacy regex and substring match constraints if present
+  if v_invalid_video_ids > 0 then
+    raise exception 'Migration failed: Found % record(s) in portfolio_items with invalid youtube_video_id (must be strictly 11 allowed characters: a-z, A-Z, 0-9, _, -). Please correct the records before rerunning this migration.', v_invalid_video_ids;
+  end if;
+
+  select count(*) into v_invalid_urls
+  from public.portfolio_items
+  where youtube_url != ('https://www.youtube.com/watch?v=' || youtube_video_id)
+    and youtube_url != ('https://www.youtube.com/shorts/' || youtube_video_id);
+
+  if v_invalid_urls > 0 then
+    raise exception 'Migration failed: Found % record(s) in portfolio_items where youtube_url is not in canonical format matching youtube_video_id (https://www.youtube.com/watch?v=ID or https://www.youtube.com/shorts/ID). Please normalize these URLs before rerunning this migration.', v_invalid_urls;
+  end if;
+
+  select count(*) into v_invalid_thumbs
+  from public.portfolio_items
+  where thumbnail_url is not null
+    and (length(thumbnail_url) > 2048 or thumbnail_url !~* '^https://[^\s"''<>]+$');
+
+  if v_invalid_thumbs > 0 then
+    raise exception 'Migration failed: Found % record(s) in portfolio_items with non-HTTPS or invalid thumbnail_url. Please correct these records before rerunning this migration.', v_invalid_thumbs;
+  end if;
+
+  select count(*) into v_invalid_titles
+  from public.portfolio_items
+  where length(trim(title_en)) = 0 or length(title_en) > 255;
+
+  if v_invalid_titles > 0 then
+    raise exception 'Migration failed: Found % record(s) in portfolio_items with empty or overlong title_en. Please correct these records before rerunning this migration.', v_invalid_titles;
+  end if;
+
+  -- 2. Drop legacy or outdated constraints idempotently
+  alter table public.portfolio_items drop constraint if exists portfolio_items_youtube_video_id_check;
   alter table public.portfolio_items drop constraint if exists portfolio_items_youtube_url_check;
   alter table public.portfolio_items drop constraint if exists portfolio_items_youtube_url_match_check;
   alter table public.portfolio_items drop constraint if exists portfolio_items_youtube_url_canonical_check;
+  alter table public.portfolio_items drop constraint if exists portfolio_items_thumbnail_url_check;
+  alter table public.portfolio_items drop constraint if exists portfolio_items_title_en_check;
 
-  -- 3. Enforce exact canonical YouTube URL constructed strictly from youtube_video_id
+  -- 3. Apply the strengthened constraints
+  alter table public.portfolio_items add constraint portfolio_items_youtube_video_id_check
+    check (youtube_video_id ~ '^[a-zA-Z0-9_-]{11}$');
+
   alter table public.portfolio_items add constraint portfolio_items_youtube_url_canonical_check
     check (
       youtube_url = ('https://www.youtube.com/watch?v=' || youtube_video_id) or
       youtube_url = ('https://www.youtube.com/shorts/' || youtube_video_id)
     );
 
-  -- 4. Constrain thumbnail_url to NULL or valid secure HTTPS URL without HTML characters
-  alter table public.portfolio_items drop constraint if exists portfolio_items_thumbnail_url_check;
   alter table public.portfolio_items add constraint portfolio_items_thumbnail_url_check
     check (thumbnail_url is null or (length(thumbnail_url) <= 2048 and thumbnail_url ~* '^https://[^\s"''<>]+$'));
 
-  -- 5. Constrain title_en to non-empty string <= 255 characters
-  alter table public.portfolio_items drop constraint if exists portfolio_items_title_en_check;
   alter table public.portfolio_items add constraint portfolio_items_title_en_check
     check (length(trim(title_en)) > 0 and length(title_en) <= 255);
-exception
-  when others then
-    -- Ensures execution continues cleanly if table was just created above
-    null;
+
+  -- Note: Migration errors are not caught or suppressed; any SQL or data error halts execution and is visibly reported to the administrator.
 end $$;
 
 -- Create Indexes for fast querying & sorting
