@@ -3,6 +3,7 @@
 
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 # XML Sitemap location
 Sitemap: https://svideocreation.netlify.app/sitemap.xml

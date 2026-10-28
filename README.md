@@ -103,6 +103,112 @@ The website consists of **24 fully implemented, standalone static HTML pages** a
 
 ---
 
+## Portfolio Management System (V1 — Admin Dashboard)
+
+The website includes a private, mobile-friendly portfolio management dashboard at `/admin/`. It allows studio employees to manage showcase videos without modifying code, editing HTML, using Git, or triggering Netlify builds.
+
+### 1. Architecture & Technology
+- **Admin Dashboard Route:** `/admin/` (serves `admin/index.html`)
+- **Video Storage & Playback:** YouTube (hosted on YouTube, streamed via privacy-enhanced `youtube-nocookie.com` click-to-play embeds)
+- **Database:** Supabase Postgres (`portfolio_items` table)
+- **Authentication:** Supabase Auth (Email & Password)
+- **Authorization & Access Control:** Strict database-level Row Level Security (RLS) linked to an authorized employee allowlist table (`admin_users`)
+- **Public Portfolio Sync:** Automatic on page load via `js/portfolio-loader.js`. New or updated items appear immediately on public pages without redeploying the site.
+
+---
+
+### 2. Supabase Setup Guide (Owner Instructions)
+
+Follow these steps to connect your Supabase database:
+
+#### Step 1: Create a Supabase Project
+1. Go to [https://supabase.com](https://supabase.com) and sign in.
+2. Click **"New Project"**, select your organization, name the project (e.g. `s-video-creation`), and set a strong database password.
+3. Choose the closest region (e.g. `South Asia (Mumbai)`).
+
+#### Step 2: Run the SQL Schema & Security Policies
+1. In your Supabase dashboard, click the **SQL Editor** tab in the left sidebar.
+2. Click **"New query"**.
+3. Open [`supabase/schema.sql`](./supabase/schema.sql) in this repository, copy its entire contents, paste them into the SQL editor, and click **"Run"**.
+4. This script is fully idempotent (safe to rerun at any time) and provisions:
+   - `public.portfolio_items` table with constraints and indexes.
+   - `public.admin_users` employee allowlist table.
+   - Hardened `public.is_admin()` security definer function (`set search_path = ''`).
+   - Explicit table privilege revocations (blocking TRUNCATE and schema writes) with least-privilege grants.
+   - Restrictive Row Level Security (RLS) policies allowing public visitors to read **only published** entries, while write operations require an allowlisted employee.
+
+#### Step 3: Configure Project Credentials
+1. In Supabase, navigate to **Project Settings** > **API**.
+2. Copy the **Project URL** and the **Project API key (`anon` / `public`)**.
+3. Open [`js/supabase-client.js`](./js/supabase-client.js) in your repository.
+4. Replace the placeholders with your copied credentials:
+   ```javascript
+   const DEFAULT_CONFIG = {
+     url: 'https://your-project-id.supabase.co',
+     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+   };
+   ```
+   *(Note: Never enter your secret `service_role` key in this client file).*
+
+#### Step 4: Create the First Administrator
+1. In your Supabase dashboard, navigate to **Authentication** > **Users**.
+2. Click **"Add user"** > **"Create user"**.
+3. Enter your employee/owner email and a secure password, then click **"Create user"**.
+4. In the user list, copy the **User UID** (a 36-character UUID like `a1b2c3d4-e5f6-7890-abcd-ef1234567890`).
+5. Return to the **SQL Editor** and execute the authorization query:
+   ```sql
+   INSERT INTO public.admin_users (id, email, role)
+   VALUES (
+     'PASTE-USER-UID-HERE',
+     'owner@svideocreation.com',
+     'superadmin'
+   );
+   ```
+6. You can now visit `http://localhost:8080/admin/` (or `https://svideocreation.netlify.app/admin/`) and sign in!
+
+#### Step 5: Adding and Removing Employees
+- **To add an employee:**
+  1. Have the employee created in **Authentication** > **Users** (or invite by email).
+  2. Copy their User UID.
+  3. In the SQL Editor, insert them into `admin_users`:
+     ```sql
+     INSERT INTO public.admin_users (id, email, role)
+     VALUES ('EMPLOYEE-USER-UID', 'employee@svideocreation.com', 'admin');
+     ```
+- **To remove an employee:**
+  In the SQL Editor, delete their row from `admin_users`:
+  ```sql
+  DELETE FROM public.admin_users WHERE email = 'employee@svideocreation.com';
+  ```
+  *(Their write permissions and dashboard access are immediately revoked).*
+
+#### Step 6: Authentication Redirect URLs
+In Supabase dashboard under **Authentication** > **URL Configuration**:
+- Set **Site URL** to: `https://svideocreation.netlify.app`
+- Add to **Redirect URLs**:
+  - `https://svideocreation.netlify.app/admin/`
+  - `http://localhost:8080/admin/` (for local development)
+
+---
+
+### 3. Employee Workflow (How to Add Videos)
+1. **Upload Video to YouTube:**
+   - Upload the project or Short to the studio's YouTube channel as **Public** or **Unlisted**.
+2. **Copy the YouTube URL:**
+   - Accepts standard watch links (`youtube.com/watch?v=...`), short links (`youtu.be/...`), or Shorts (`youtube.com/shorts/...`).
+3. **Open the Dashboard (`/admin/`):**
+   - Click **"Add New Entry"**.
+   - Paste the YouTube link. The system extracts and verifies the 11-character video ID, fetches the thumbnail preview, and detects if it is a vertical Short.
+   - Enter titles and optional descriptions in English and Hindi.
+   - Choose the service category (`Video Editing`, `Reels & Promos`, `Wedding & Events`, `Video Mixing`, `Other`).
+   - Choose orientation (16:9 Landscape or 9:16 Portrait).
+   - Check **"Feature on Homepage"** if it should appear on the homepage selected work grid.
+   - Click **"Publish Video Entry"** (or **"Save as Draft"**).
+4. **Immediate Public Visibility:**
+   - The video appears immediately on the live website upon next visitor load with click-to-play playback. No Netlify build or Git commit needed!
+
+---
+
 ## Launch Essentials
 
 - `robots.txt` — Grants full crawler access and links to the XML sitemap.

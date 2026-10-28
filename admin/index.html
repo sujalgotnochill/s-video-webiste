@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Management Dashboard — S. Video Creation</title>
+  
+  <!-- Security & SEO: Never index administrative dashboard in search engines -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/images/brand/s-video-creation-icon.png">
+
+  <!-- Typography: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/admin.css">
+
+  <!-- Supabase JS Client v2 (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- S. Video Creation Supabase Client Config & YouTube Helpers -->
+  <script src="../js/supabase-client.js"></script>
+  <!-- Admin Application Logic -->
+  <script src="../js/admin.js" defer></script>
+</head>
+
+<body class="admin-body">
+
+  <!-- ======================================================================
+       Header & Navigation
+       ====================================================================== -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a href="./" class="admin-brand">
+        <img src="../assets/images/brand/s-video-creation-icon.png" alt="S. Video Creation Icon" class="admin-brand-icon" width="38" height="38">
+        <div class="admin-brand-text">
+          <span class="admin-brand-title"><span>S. VIDEO</span> CREATION</span>
+          <span class="admin-brand-badge">Portfolio Management System</span>
+        </div>
+      </a>
+
+      <div class="admin-header-actions" id="headerActions">
+        <a href="../" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-outline admin-btn-sm">
+          View Website &UpperRightArrow;
+        </a>
+        <div id="userPillContainer" class="admin-user-pill" style="display: none;">
+          <span id="userEmailDisplay">employee@svideocreation.com</span>
+          <span id="userRoleDisplay" class="admin-role-badge">admin</span>
+        </div>
+        <button type="button" id="logoutBtn" class="admin-btn admin-btn-outline admin-btn-sm" style="display: none;">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       VIEW A: Employee Authentication (Login Form)
+       ====================================================================== -->
+  <main id="authView" class="admin-auth-view" style="display: flex;">
+    <div class="admin-login-card">
+      <div class="admin-login-header">
+        <img src="../assets/images/brand/s-video-creation-icon.png" alt="S. Video Creation" class="admin-login-logo">
+        <h1 class="admin-login-title">Portfolio Manager Portal</h1>
+        <p class="admin-login-subtitle">Authorized employee access for S. Video Creation ("The Edit Station")</p>
+      </div>
+
+      <!-- Configuration Warning Banner (Displayed only if Supabase credentials are missing) -->
+      <div id="configWarningBanner" class="admin-banner admin-banner-warning" style="display: none;">
+        <svg class="admin-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="admin-banner-content">
+          <h4>Supabase Not Configured</h4>
+          <p>Please configure your Supabase Project URL and Anon Key in <code>js/supabase-client.js</code> before signing in.</p>
+        </div>
+      </div>
+
+      <div id="authError" class="admin-auth-error" role="alert"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="admin-form-group">
+          <label for="loginEmail" class="admin-label">Employee Email <span class="required">*</span></label>
+          <input type="email" id="loginEmail" class="admin-input" placeholder="name@svideocreation.com" required autocomplete="email">
+        </div>
+
+        <div class="admin-form-group">
+          <label for="loginPassword" class="admin-label">Password <span class="required">*</span></label>
+          <input type="password" id="loginPassword" class="admin-input" placeholder="••••••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="admin-btn admin-btn-primary" style="width: 100%; margin-top: 8px;">
+          Sign In to Dashboard &rarr;
+        </button>
+      </form>
+
+      <p class="admin-form-hint" style="text-align: center; margin-top: 20px;">
+        Strict employee access control enabled. If you require credentials or your account is not authorized, please contact the studio owner.
+      </p>
+    </div>
+  </main>
+
+  <!-- ======================================================================
+       VIEW B: Protected Management Dashboard
+       ====================================================================== -->
+  <main id="dashboardView" class="admin-container" style="display: none;">
+
+    <!-- Instructions Banner for Employees -->
+    <div class="admin-banner admin-banner-info">
+      <svg class="admin-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+        <polyline points="2 17 12 22 22 17"></polyline>
+        <polyline points="2 12 12 17 22 12"></polyline>
+      </svg>
+      <div class="admin-banner-content">
+        <h4>How to Add Videos (YouTube Workflow)</h4>
+        <p>
+          1. Upload your video or Short to YouTube (either <strong>Public</strong> or <strong>Unlisted</strong>).<br>
+          2. Copy the video link from YouTube (standard watch link, <code>youtu.be</code>, or <code>/shorts/</code>) and click <strong>"Add New Entry"</strong> below.<br>
+          3. The system will automatically verify the video ID and fetch the thumbnail. Review your details and hit <strong>Publish</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Overview Stats Grid -->
+    <section class="admin-stats-grid" aria-label="Portfolio Statistics">
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Total Entries</span>
+        <span id="statTotal" class="admin-stat-value">0</span>
+      </div>
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Published</span>
+        <span id="statPublished" class="admin-stat-value" style="color: var(--admin-status-published);">0</span>
+      </div>
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Drafts</span>
+        <span id="statDraft" class="admin-stat-value" style="color: var(--admin-status-draft);">0</span>
+      </div>
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">Featured on Home</span>
+        <span id="statFeatured" class="admin-stat-value" style="color: #F59E0B;">0</span>
+      </div>
+    </section>
+
+    <!-- Controls & Action Bar -->
+    <section class="admin-controls-card">
+      <div class="admin-search-filters">
+        <input type="text" id="searchInput" class="admin-input admin-search-input" placeholder="Search by title or video ID...">
+        
+        <select id="filterCategory" class="admin-select admin-filter-select" aria-label="Filter by Category">
+          <option value="all">All Categories</option>
+          <option value="editing">Video Editing</option>
+          <option value="reels">Reels &amp; Promos</option>
+          <option value="wedding">Wedding &amp; Events</option>
+          <option value="mixing">Video Mixing</option>
+          <option value="other">Other</option>
+        </select>
+
+        <select id="filterStatus" class="admin-select admin-filter-select" aria-label="Filter by Status">
+          <option value="all">All Statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+
+        <select id="filterOrientation" class="admin-select admin-filter-select" aria-label="Filter by Orientation">
+          <option value="all">All Formats</option>
+          <option value="landscape">16:9 Landscape</option>
+          <option value="portrait">9:16 Vertical</option>
+        </select>
+      </div>
+
+      <button type="button" id="openAddModalBtn" class="admin-btn admin-btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add New Entry
+      </button>
+    </section>
+
+    <!-- Portfolio Table -->
+    <section class="admin-table-wrapper" aria-label="Portfolio Entries List">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Thumbnail</th>
+            <th scope="col">Title &amp; Details</th>
+            <th scope="col">Category</th>
+            <th scope="col">Orientation</th>
+            <th scope="col">Status</th>
+            <th scope="col">Order</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="portfolioTableBody">
+          <!-- Populated dynamically via js/admin.js -->
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="admin-empty-state" style="display: none;">
+        <svg class="admin-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+          <line x1="7" y1="2" x2="7" y2="22"></line>
+          <line x1="17" y1="2" x2="17" y2="22"></line>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+        </svg>
+        <h3 class="admin-empty-title">No Portfolio Entries Found</h3>
+        <p class="admin-empty-desc">
+          No records match your search or filter criteria. Click "Add New Entry" to publish your first video showcase.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       MODAL 1: Add / Edit Portfolio Entry
+       ====================================================================== -->
+  <div id="entryModal" class="admin-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="entryModalTitle">
+    <div class="admin-modal-box">
+      <div class="admin-modal-header">
+        <h2 id="entryModalTitle" class="admin-modal-title">Add New Portfolio Entry</h2>
+        <button type="button" id="closeModalBtn" class="admin-modal-close" aria-label="Close modal">&times;</button>
+      </div>
+
+      <form id="entryForm" class="admin-modal-body" novalidate>
+        <!-- YouTube URL Input -->
+        <div class="admin-form-group">
+          <label for="youtubeUrl" class="admin-label">YouTube Video URL or Shorts Link <span class="required">*</span></label>
+          <input type="url" id="youtubeUrl" class="admin-input" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/... or https://youtube.com/shorts/..." required>
+          <p class="admin-form-hint">Supports full watch links, short youtu.be URLs, and YouTube Shorts links.</p>
+
+          <!-- Real-Time URL Validation & Live Thumbnail Preview Card -->
+          <div id="ytPreviewCard" class="admin-yt-preview-card" style="display: none;">
+            <div id="ytVideoPlayerBox" class="admin-yt-preview-box">
+              <img id="ytPreviewImg" src="" alt="Thumbnail preview" class="admin-thumb-img">
+            </div>
+            <div class="admin-yt-preview-info">
+              <span id="ytPreviewId" class="admin-yt-preview-id">Valid Video ID: ...</span>
+              <p class="admin-form-hint" style="margin: 0;">Thumbnail verified. You can preview playback directly below:</p>
+              <button type="button" id="testPlayBtn" class="admin-btn admin-btn-outline admin-btn-sm" style="align-self: flex-start; margin-top: 6px;">
+                ▶ Test Playback in Preview
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bilingual Titles Row -->
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label for="titleEn" class="admin-label">Title (English) <span class="required">*</span></label>
+            <input type="text" id="titleEn" class="admin-input" placeholder="e.g. Cinematic Wedding Highlights" required>
+          </div>
+          <div class="admin-form-group">
+            <label for="titleHi" class="admin-label">Title (Hindi) <span style="font-weight: 400; color: var(--admin-text-muted);">(Optional)</span></label>
+            <input type="text" id="titleHi" class="admin-input" placeholder="उदा. सिनेमैटिक वेडिंग टीज़र">
+          </div>
+        </div>
+
+        <!-- Bilingual Descriptions Row -->
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label for="descEn" class="admin-label">Description (English)</label>
+            <textarea id="descEn" class="admin-textarea" placeholder="Brief summary of editing workflows, color grading, or event scope..."></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="descHi" class="admin-label">Description (Hindi)</label>
+            <textarea id="descHi" class="admin-textarea" placeholder="प्रोजेक्ट का संक्षिप्त विवरण..."></textarea>
+          </div>
+        </div>
+
+        <!-- Category & Orientation Row -->
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label for="category" class="admin-label">Service Category <span class="required">*</span></label>
+            <select id="category" class="admin-select" required>
+              <option value="editing">Video Editing</option>
+              <option value="reels">Reels &amp; Promotional Videos</option>
+              <option value="wedding">Wedding &amp; Event Video</option>
+              <option value="mixing">Video Mixing</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="orientation" class="admin-label">Video Orientation <span class="required">*</span></label>
+            <select id="orientation" class="admin-select" required>
+              <option value="landscape">16:9 Landscape (Widescreen)</option>
+              <option value="portrait">9:16 Portrait (Vertical Reel)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Thumbnail Override & Sort Order Row -->
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label for="thumbnailUrl" class="admin-label">Custom Thumbnail URL <span style="font-weight: 400; color: var(--admin-text-muted);">(Optional)</span></label>
+            <input type="url" id="thumbnailUrl" class="admin-input" placeholder="Leave empty to use official YouTube HQ thumbnail">
+          </div>
+
+          <div class="admin-form-row" style="gap: 12px;">
+            <div class="admin-form-group">
+              <label for="status" class="admin-label">Status <span class="required">*</span></label>
+              <select id="status" class="admin-select" required>
+                <option value="published">Published</option>
+                <option value="draft">Draft (Hidden)</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label for="sortOrder" class="admin-label">Sort Order</label>
+              <input type="number" id="sortOrder" class="admin-input" value="0" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature on Homepage Checkbox -->
+        <div class="admin-form-group" style="margin-top: 10px; margin-bottom: 0;">
+          <label class="admin-checkbox-label">
+            <input type="checkbox" id="isFeatured">
+            <span>Feature this entry on the Studio Homepage</span>
+          </label>
+          <p class="admin-form-hint" style="margin-left: 28px;">
+            Featured entries appear directly in the selected work preview grid on the homepage.
+          </p>
+        </div>
+      </form>
+
+      <div class="admin-modal-footer">
+        <button type="button" id="cancelModalBtn" class="admin-btn admin-btn-outline">Cancel</button>
+        <button type="button" id="saveDraftBtn" class="admin-btn admin-btn-secondary">Save as Draft</button>
+        <button type="submit" form="entryForm" id="saveEntryBtn" class="admin-btn admin-btn-primary">Publish Video Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 2: Delete Confirmation Modal
+       ====================================================================== -->
+  <div id="deleteModal" class="admin-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="admin-modal-box" style="max-width: 460px;">
+      <div class="admin-modal-header">
+        <h2 id="deleteModalTitle" class="admin-modal-title">Confirm Deletion</h2>
+        <button type="button" onclick="document.getElementById('deleteModal').classList.remove('active')" class="admin-modal-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <p style="color: var(--admin-text-secondary); line-height: 1.6;">
+          Are you sure you want to delete <strong id="deleteItemTitle" style="color: #FFFFFF;">this entry</strong>?
+        </p>
+        <p style="color: #EF4444; font-size: 13px; margin-top: 10px; font-weight: 600;">
+          This action permanently removes the record from the database and cannot be undone.
+        </p>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" id="cancelDeleteBtn" class="admin-btn admin-btn-outline">Cancel</button>
+        <button type="button" id="confirmDeleteBtn" class="admin-btn admin-btn-danger">Yes, Delete Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="admin-toast-container" aria-live="polite"></div>
+
+</body>
+</html>
+

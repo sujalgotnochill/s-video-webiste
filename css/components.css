@@ -312,6 +312,74 @@
   aspect-ratio: 9 / 16;
 }
 
+/* Video & Embed Integration inside Media Box */
+.portfolio-media-box video,
+.portfolio-media-box iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: cover;
+}
+
+.portfolio-media-box:has(video),
+.portfolio-media-box:has(iframe),
+.portfolio-media-box.has-media {
+  padding: 0;
+  background-color: #000;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Thumbnail-First Lazy Load & Play Button Overlay */
+.portfolio-media-box .portfolio-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-normal);
+}
+
+.portfolio-media-box:hover .portfolio-thumb-img {
+  transform: scale(1.04);
+}
+
+.portfolio-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background-color: rgba(227, 38, 54, 0.92);
+  border: 2px solid #FFFFFF;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  padding: 0;
+}
+
+.portfolio-play-btn svg {
+  margin-left: 2px;
+}
+
+.portfolio-play-btn:hover {
+  background-color: #E32636;
+  transform: translate(-50%, -50%) scale(1.12);
+  box-shadow: 0 6px 24px rgba(227, 38, 54, 0.6);
+}
+
+.portfolio-play-btn:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 3px;
+}
+
 .portfolio-placeholder-icon {
   width: 44px;
   height: 44px;
