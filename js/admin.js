@@ -21,6 +21,7 @@
   let portfolioItems = [];
   let editingItemId = null;
   let itemPendingDelete = null;
+  let lastFocusedElement = null;
 
   // Cache DOM Elements
   const authView = document.getElementById('authView');
@@ -681,11 +682,41 @@
     if (closeModalBtn) closeModalBtn.addEventListener('click', closeEntryModal);
     if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeEntryModal);
 
-    // Escape Key to close modal
+    // Modal Keyboard Management: Escape to close & Tab focus trap
     document.addEventListener('keydown', (e) => {
+      const activeModal = (entryModal && entryModal.classList.contains('active'))
+        ? entryModal
+        : ((deleteModal && deleteModal.classList.contains('active')) ? deleteModal : null);
+
+      if (!activeModal) return;
+
       if (e.key === 'Escape') {
-        if (entryModal && entryModal.classList.contains('active')) closeEntryModal();
-        if (deleteModal && deleteModal.classList.contains('active')) closeDeleteModal();
+        e.preventDefault();
+        if (activeModal === entryModal) closeEntryModal();
+        else if (activeModal === deleteModal) closeDeleteModal();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusable = activeModal.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first || !activeModal.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !activeModal.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     });
 
@@ -762,6 +793,7 @@
   }
 
   function openAddModal() {
+    lastFocusedElement = document.activeElement;
     editingItemId = null;
     if (entryModalTitle) entryModalTitle.textContent = 'Add New Portfolio Entry';
     if (saveEntryBtn) saveEntryBtn.textContent = 'Publish Video Entry';
@@ -775,11 +807,13 @@
     const maxOrder = portfolioItems.reduce((max, i) => Math.max(max, i.sort_order || 0), 0);
     if (inputSortOrder) inputSortOrder.value = String(maxOrder + 10);
 
+    if (dashboardView) dashboardView.setAttribute('aria-hidden', 'true');
     if (entryModal) entryModal.classList.add('active');
     setTimeout(() => { if (inputYoutubeUrl) inputYoutubeUrl.focus(); }, 100);
   }
 
   function openEditModal(item) {
+    lastFocusedElement = document.activeElement;
     editingItemId = item.id;
     if (entryModalTitle) entryModalTitle.textContent = 'Edit Portfolio Entry';
     if (saveEntryBtn) saveEntryBtn.textContent = 'Save Changes';
@@ -815,13 +849,20 @@
 
     if (testPlayBtn) testPlayBtn.disabled = !window.isValidYouTubeId(item.youtube_video_id);
 
+    if (dashboardView) dashboardView.setAttribute('aria-hidden', 'true');
     if (entryModal) entryModal.classList.add('active');
+    setTimeout(() => { if (inputYoutubeUrl) inputYoutubeUrl.focus(); }, 100);
   }
 
   function closeEntryModal() {
     if (entryModal) entryModal.classList.remove('active');
+    if (dashboardView) dashboardView.removeAttribute('aria-hidden');
     editingItemId = null;
     resetPreviewPlayer();
+    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
   }
 
   async function savePortfolioItem(targetStatus) {
@@ -934,14 +975,22 @@
   // ============================================================================
 
   function openDeleteModal(item) {
+    lastFocusedElement = document.activeElement;
     itemPendingDelete = item;
     if (deleteTitleSpan) deleteTitleSpan.textContent = item.title_en || 'this entry';
+    if (dashboardView) dashboardView.setAttribute('aria-hidden', 'true');
     if (deleteModal) deleteModal.classList.add('active');
+    setTimeout(() => { if (cancelDeleteBtn) cancelDeleteBtn.focus(); }, 50);
   }
 
   function closeDeleteModal() {
     if (deleteModal) deleteModal.classList.remove('active');
+    if (dashboardView) dashboardView.removeAttribute('aria-hidden');
     itemPendingDelete = null;
+    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
   }
 
   async function executeDelete() {
