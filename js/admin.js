@@ -792,6 +792,27 @@
     }
   }
 
+  // ============================================================================
+  // Background Inert & Accessibility Helpers
+  // ============================================================================
+
+  function setBackgroundInert(isInert) {
+    const headerEl = document.querySelector('.admin-header');
+    const mainEl = document.getElementById('mainContent');
+    const skipLink = document.querySelector('.skip-to-content');
+
+    const elements = [headerEl, mainEl, skipLink];
+    elements.forEach((el) => {
+      if (!el) return;
+      if (isInert) {
+        el.setAttribute('inert', '');
+        el.setAttribute('aria-hidden', 'true');
+      } else {
+        el.removeAttribute('inert');
+        el.removeAttribute('aria-hidden');
+      }
+    });
+  }
   function openAddModal() {
     lastFocusedElement = document.activeElement;
     editingItemId = null;
@@ -807,7 +828,7 @@
     const maxOrder = portfolioItems.reduce((max, i) => Math.max(max, i.sort_order || 0), 0);
     if (inputSortOrder) inputSortOrder.value = String(maxOrder + 10);
 
-    if (dashboardView) dashboardView.setAttribute('aria-hidden', 'true');
+    setBackgroundInert(true);
     if (entryModal) entryModal.classList.add('active');
     setTimeout(() => { if (inputYoutubeUrl) inputYoutubeUrl.focus(); }, 100);
   }
@@ -849,14 +870,14 @@
 
     if (testPlayBtn) testPlayBtn.disabled = !window.isValidYouTubeId(item.youtube_video_id);
 
-    if (dashboardView) dashboardView.setAttribute('aria-hidden', 'true');
+    setBackgroundInert(true);
     if (entryModal) entryModal.classList.add('active');
     setTimeout(() => { if (inputYoutubeUrl) inputYoutubeUrl.focus(); }, 100);
   }
 
   function closeEntryModal() {
     if (entryModal) entryModal.classList.remove('active');
-    if (dashboardView) dashboardView.removeAttribute('aria-hidden');
+    setBackgroundInert(false);
     editingItemId = null;
     resetPreviewPlayer();
     if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
@@ -978,14 +999,14 @@
     lastFocusedElement = document.activeElement;
     itemPendingDelete = item;
     if (deleteTitleSpan) deleteTitleSpan.textContent = item.title_en || 'this entry';
-    if (dashboardView) dashboardView.setAttribute('aria-hidden', 'true');
+    setBackgroundInert(true);
     if (deleteModal) deleteModal.classList.add('active');
     setTimeout(() => { if (cancelDeleteBtn) cancelDeleteBtn.focus(); }, 50);
   }
 
   function closeDeleteModal() {
     if (deleteModal) deleteModal.classList.remove('active');
-    if (dashboardView) dashboardView.removeAttribute('aria-hidden');
+    setBackgroundInert(false);
     itemPendingDelete = null;
     if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
       lastFocusedElement.focus();
@@ -1015,6 +1036,11 @@
       showToast('Portfolio entry deleted successfully.', 'success');
       closeDeleteModal();
       await fetchPortfolioItems();
+      if (openAddModalBtn && typeof openAddModalBtn.focus === 'function') {
+        openAddModalBtn.focus();
+      } else if (searchInput && typeof searchInput.focus === 'function') {
+        searchInput.focus();
+      }
     } catch (err) {
       console.error('[S. Video Creation] Delete failed:', err);
       showToast('Failed to delete entry: ' + (err.message || 'Database error'), 'error');
