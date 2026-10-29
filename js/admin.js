@@ -82,6 +82,7 @@
   const deleteTitleSpan = document.getElementById('deleteItemTitle');
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
 
   // Toast Container
   const toastContainer = document.getElementById('toastContainer');
@@ -754,6 +755,9 @@
     }
     if (cancelDeleteBtn) {
       cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+    }
+    if (closeDeleteModalBtn) {
+      closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
     }
   }
 

@@ -13,6 +13,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Cache-Control = "public, max-age=0, must-revalidate"
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://img.youtube.com https://i.ytimg.com https:; frame-src https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://babfkmmaoijjyidepnfr.supabase.co wss://babfkmmaoijjyidepnfr.supabase.co https://cdn.jsdelivr.net; media-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self';"
 
 # Asset Caching (unhashed files - do not use immutable)
 [[headers]]

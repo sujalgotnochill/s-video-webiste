@@ -21,8 +21,14 @@
   };
 
   // Optional localStorage overrides for seamless developer / local testing
-  const storedUrl = (typeof localStorage !== 'undefined') ? localStorage.getItem('svc_supabase_url') : null;
-  const storedKey = (typeof localStorage !== 'undefined') ? localStorage.getItem('svc_supabase_anon_key') : null;
+  const isLocalDev = (typeof window !== 'undefined' && window.location) ? (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '[::1]'
+  ) : false;
+
+  const storedUrl = (isLocalDev && typeof localStorage !== 'undefined') ? localStorage.getItem('svc_supabase_url') : null;
+  const storedKey = (isLocalDev && typeof localStorage !== 'undefined') ? localStorage.getItem('svc_supabase_anon_key') : null;
 
   window.SUPABASE_CONFIG = {
     url: storedUrl || DEFAULT_CONFIG.url,

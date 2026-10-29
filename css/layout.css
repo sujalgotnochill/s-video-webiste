@@ -234,7 +234,7 @@
   height: 160px;
   max-width: 100%;
   width: auto;
-  aspect-ratio: 2752 / 1536;
+  aspect-ratio: 600 / 335;
   object-fit: contain;
   border-radius: var(--radius-sm);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
