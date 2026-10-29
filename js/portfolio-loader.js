@@ -38,148 +38,258 @@
     }
   };
 
+  /**
+   * Sets the view state for the portfolio page: 'loading' | 'ready' | 'empty' | 'error'
+   */
+  function setPortfolioPageState(state) {
+    const loadingEl = document.getElementById('portfolioLoading');
+    const gridEl = document.getElementById('portfolioGrid');
+    const globalEmptyEl = document.getElementById('portfolioGlobalEmpty');
+    const errorEl = document.getElementById('portfolioError');
+    const filterEmptyEl = document.getElementById('portfolioEmptyState');
+    const filterWrapper = document.querySelector('.portfolio-filter-wrapper');
+
+    if (loadingEl) loadingEl.style.display = (state === 'loading') ? 'flex' : 'none';
+    if (gridEl) gridEl.style.display = (state === 'ready') ? '' : 'none';
+    if (globalEmptyEl) globalEmptyEl.style.display = (state === 'empty') ? 'block' : 'none';
+    if (errorEl) errorEl.style.display = (state === 'error') ? 'block' : 'none';
+    if (filterEmptyEl) filterEmptyEl.style.display = 'none';
+
+    if (filterWrapper) {
+      filterWrapper.style.display = (state === 'ready') ? '' : 'none';
+    }
+  }
+
+  /**
+   * Sets the view state for the homepage portfolio section:
+   * 'loading' | 'ready' | 'empty-no-featured' | 'empty-no-projects' | 'error'
+   */
+  function setHomepagePortfolioState(state) {
+    const loadingEl = document.getElementById('homePortfolioLoading');
+    const emptyNoFeaturedEl = document.getElementById('homePortfolioEmptyNoFeatured');
+    const emptyNoProjectsEl = document.getElementById('homePortfolioEmptyNoProjects');
+    const errorEl = document.getElementById('homePortfolioError');
+    const gridEl = document.querySelector('.portfolio-grid');
+    const ctaEl = document.getElementById('homePortfolioCta');
+
+    if (loadingEl) loadingEl.style.display = (state === 'loading') ? 'flex' : 'none';
+    if (emptyNoFeaturedEl) emptyNoFeaturedEl.style.display = (state === 'empty-no-featured') ? 'block' : 'none';
+    if (emptyNoProjectsEl) emptyNoProjectsEl.style.display = (state === 'empty-no-projects') ? 'block' : 'none';
+    if (errorEl) errorEl.style.display = (state === 'error') ? 'block' : 'none';
+    if (gridEl) gridEl.style.display = (state === 'ready') ? '' : 'none';
+    if (ctaEl) ctaEl.style.display = (state === 'ready') ? '' : 'none';
+  }
+
   async function initPortfolioLoader() {
-    const isHomepage = !!document.querySelector('.portfolio-grid');
     const isPortfolioPage = !!document.getElementById('portfolioGrid');
+    const isHomepage = !isPortfolioPage && !!document.querySelector('.portfolio-grid');
 
     if (!isHomepage && !isPortfolioPage) return;
 
-    // If Supabase credentials are not set, maintain static preview cards
-    if (typeof window.isSupabaseConfigured !== 'function' || !window.isSupabaseConfigured()) {
-      console.info('[S. Video Creation] Supabase is unconfigured. Showing static studio workflow preview.');
+    if (isPortfolioPage) {
+      await loadPortfolioPageEntries();
       return;
     }
 
-    const client = window.getSupabaseClient();
-    if (!client) return;
-
-    try {
-      if (isPortfolioPage) {
-        await loadPortfolioPageEntries(client);
-      } else if (isHomepage) {
-        await loadHomepageEntries(client);
-      }
-    } catch (err) {
-      console.warn('[S. Video Creation] Failed to load dynamic portfolio entries; preserving preview cards.', err);
+    if (isHomepage) {
+      await loadHomepageEntries();
     }
   }
 
   /**
    * Homepage: load published entries marked as is_featured=true
    */
-  async function loadHomepageEntries(client) {
+  async function loadHomepageEntries() {
     const grid = document.querySelector('.portfolio-grid');
+    const retryBtn = document.getElementById('homePortfolioRetryBtn');
+
+    if (retryBtn && !retryBtn._hasRetryListener) {
+      retryBtn._hasRetryListener = true;
+      retryBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        loadHomepageEntries();
+      });
+    }
+
     if (!grid) return;
 
-    const { data, error } = await client
-      .from('portfolio_items')
-      .select('*')
-      .eq('status', 'published')
-      .eq('is_featured', true)
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: false })
-      .limit(6);
+    // Show loading state immediately to prevent layout shift
+    setHomepagePortfolioState('loading');
 
-    if (error) {
-      console.warn('[S. Video Creation] Error fetching featured portfolio items:', error.message);
+    // Check configuration
+    if (typeof window.isSupabaseConfigured !== 'function' || !window.isSupabaseConfigured()) {
+      console.warn('[S. Video Creation] Supabase is unconfigured.');
+      setHomepagePortfolioState('error');
       return;
     }
 
-    if (!data || data.length === 0) {
-      // Keep static preview placeholders if no published featured items exist yet
+    const client = (typeof window.getSupabaseClient === 'function') ? window.getSupabaseClient() : null;
+    if (!client) {
+      console.warn('[S. Video Creation] Supabase client unavailable.');
+      setHomepagePortfolioState('error');
       return;
     }
 
-    // Replace static cards with real published featured cards
-    grid.innerHTML = '';
-    const lang = isHindi() ? 'hi' : 'en';
+    try {
+      const { data, error } = await client
+        .from('portfolio_items')
+        .select('*')
+        .eq('status', 'published')
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false });
 
-    data.forEach((item) => {
-      const card = createPortfolioCard(item, lang, false);
-      grid.appendChild(card);
-    });
+      if (error) {
+        console.warn('[S. Video Creation] Error fetching featured portfolio items:', error.message);
+        setHomepagePortfolioState('error');
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        // Zero published records found
+        setHomepagePortfolioState('empty-no-projects');
+        return;
+      }
+
+      const featuredItems = data.filter(item => item.is_featured === true).slice(0, 6);
+
+      if (featuredItems.length === 0) {
+        // Published records exist, but none are marked as featured
+        setHomepagePortfolioState('empty-no-featured');
+        return;
+      }
+
+      grid.innerHTML = '';
+      const lang = isHindi() ? 'hi' : 'en';
+
+      featuredItems.forEach((item) => {
+        const card = createPortfolioCard(item, lang, false);
+        grid.appendChild(card);
+      });
+
+      setHomepagePortfolioState('ready');
+
+    } catch (err) {
+      console.warn('[S. Video Creation] Exception while fetching homepage portfolio items:', err);
+      setHomepagePortfolioState('error');
+    }
   }
 
   /**
    * Portfolio Page: load all published entries and distribute by orientation
    */
-  async function loadPortfolioPageEntries(client) {
+  async function loadPortfolioPageEntries() {
     const horizontalGrid = document.querySelector('.portfolio-horizontal-grid');
     const verticalGrid = document.querySelector('.portfolio-vertical-grid');
     const horizontalSide = document.getElementById('portfolioHorizontalSide');
     const verticalSide = document.getElementById('portfolioVerticalSide');
+    const retryBtn = document.getElementById('portfolioRetryBtn');
+
+    if (retryBtn && !retryBtn._hasRetryListener) {
+      retryBtn._hasRetryListener = true;
+      retryBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        loadPortfolioPageEntries();
+      });
+    }
 
     if (!horizontalGrid || !verticalGrid) return;
 
-    const { data, error } = await client
-      .from('portfolio_items')
-      .select('*')
-      .eq('status', 'published')
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: false });
+    // Show loading state immediately to prevent layout shift
+    setPortfolioPageState('loading');
 
-    if (error) {
-      console.warn('[S. Video Creation] Error fetching portfolio items:', error.message);
+    // Check configuration
+    if (typeof window.isSupabaseConfigured !== 'function' || !window.isSupabaseConfigured()) {
+      console.warn('[S. Video Creation] Supabase is unconfigured.');
+      setPortfolioPageState('error');
       return;
     }
 
-    if (!data || data.length === 0) {
-      // Keep static preview cards if database has no published entries yet
+    const client = (typeof window.getSupabaseClient === 'function') ? window.getSupabaseClient() : null;
+    if (!client) {
+      console.warn('[S. Video Creation] Supabase client unavailable.');
+      setPortfolioPageState('error');
       return;
     }
 
-    const lang = isHindi() ? 'hi' : 'en';
-    const horizontalItems = data.filter(item => item.orientation !== 'portrait');
-    const verticalItems = data.filter(item => item.orientation === 'portrait');
+    try {
+      const { data, error } = await client
+        .from('portfolio_items')
+        .select('*')
+        .eq('status', 'published')
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false });
 
-    // Populate Horizontal Grid (16:9)
-    if (horizontalItems.length > 0) {
+      if (error) {
+        console.warn('[S. Video Creation] Error fetching portfolio items:', error.message);
+        setPortfolioPageState('error');
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        // Zero published records found
+        setPortfolioPageState('empty');
+        return;
+      }
+
+      const lang = isHindi() ? 'hi' : 'en';
+      const horizontalItems = data.filter(item => item.orientation !== 'portrait');
+      const verticalItems = data.filter(item => item.orientation === 'portrait');
+
       horizontalGrid.innerHTML = '';
-      horizontalItems.forEach((item) => {
-        horizontalGrid.appendChild(createPortfolioCard(item, lang, true));
-      });
-      const countEl = horizontalSide ? horizontalSide.querySelector('.portfolio-side-count') : null;
-      if (countEl) {
-        countEl.textContent = `${horizontalItems.length} ${lang === 'hi' ? 'प्रोजेक्ट्स' : 'Projects'}`;
-      }
-    }
-
-    // Populate Vertical Grid (9:16)
-    if (verticalItems.length > 0) {
       verticalGrid.innerHTML = '';
-      verticalItems.forEach((item) => {
-        verticalGrid.appendChild(createPortfolioCard(item, lang, true));
-      });
-      const countEl = verticalSide ? verticalSide.querySelector('.portfolio-side-count') : null;
-      if (countEl) {
-        countEl.textContent = `${verticalItems.length} ${lang === 'hi' ? 'रील्स' : 'Reels'}`;
-      }
-    }
 
-    // Adjust split layout visibility if one column is empty
-    if (horizontalSide && verticalSide) {
-      if (horizontalItems.length > 0 && verticalItems.length === 0) {
-        verticalSide.style.display = 'none';
-        horizontalSide.classList.add('is-full-width');
-      } else if (verticalItems.length > 0 && horizontalItems.length === 0) {
-        horizontalSide.style.display = 'none';
-        verticalSide.classList.add('is-centered');
-      } else {
-        horizontalSide.style.display = '';
-        verticalSide.style.display = '';
-        horizontalSide.classList.remove('is-full-width');
-        verticalSide.classList.remove('is-centered');
+      // Populate Horizontal Grid (16:9)
+      if (horizontalItems.length > 0) {
+        horizontalItems.forEach((item) => {
+          horizontalGrid.appendChild(createPortfolioCard(item, lang, true));
+        });
+        const countEl = horizontalSide ? horizontalSide.querySelector('.portfolio-side-count') : null;
+        if (countEl) {
+          countEl.textContent = `${horizontalItems.length} ${lang === 'hi' ? 'प्रोजेक्ट्स' : 'Projects'}`;
+        }
       }
-    }
 
-    // Re-attach or trigger filter click on current active filter button
-    refreshFilterListeners();
+      // Populate Vertical Grid (9:16)
+      if (verticalItems.length > 0) {
+        verticalItems.forEach((item) => {
+          verticalGrid.appendChild(createPortfolioCard(item, lang, true));
+        });
+        const countEl = verticalSide ? verticalSide.querySelector('.portfolio-side-count') : null;
+        if (countEl) {
+          countEl.textContent = `${verticalItems.length} ${lang === 'hi' ? 'रील्स' : 'Reels'}`;
+        }
+      }
+
+      // Switch to ready state
+      setPortfolioPageState('ready');
+
+      // Adjust split layout visibility if one column is empty
+      if (horizontalSide && verticalSide) {
+        if (horizontalItems.length > 0 && verticalItems.length === 0) {
+          verticalSide.style.display = 'none';
+          horizontalSide.style.display = '';
+          horizontalSide.classList.add('is-full-width');
+        } else if (verticalItems.length > 0 && horizontalItems.length === 0) {
+          horizontalSide.style.display = 'none';
+          verticalSide.style.display = '';
+          verticalSide.classList.add('is-centered');
+        } else {
+          horizontalSide.style.display = '';
+          verticalSide.style.display = '';
+          horizontalSide.classList.remove('is-full-width');
+          verticalSide.classList.remove('is-centered');
+        }
+      }
+
+      // Re-trigger active filter
+      refreshFilterListeners();
+
+    } catch (err) {
+      console.warn('[S. Video Creation] Exception while fetching portfolio items:', err);
+      setPortfolioPageState('error');
+    }
   }
 
-  /**
-   * Constructs an accessible, responsive portfolio card with thumbnail-first click-to-play.
-   * Completely avoids innerHTML interpolation of database-supplied content.
-   */
   function createPortfolioCard(item, lang, isPortfolioPage) {
     const card = document.createElement('article');
     card.className = isPortfolioPage

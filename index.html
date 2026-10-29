@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -339,73 +339,69 @@
           </p>
         </div>
 
-        <!-- Portfolio Placeholder Grid (No fake client work or fabricated testimonials) -->
-        <div class="portfolio-grid">
-
-          <!-- Sample Slot 1: Cinematic Wedding Edit -->
-          <div class="portfolio-placeholder-card">
-            <div class="portfolio-media-box">
-              <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                <line x1="7" y1="2" x2="7" y2="22"></line>
-                <line x1="17" y1="2" x2="17" y2="22"></line>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
-                <line x1="2" y1="7" x2="7" y2="7"></line>
-                <line x1="2" y1="17" x2="7" y2="17"></line>
-                <line x1="17" y1="17" x2="22" y2="17"></line>
-                <line x1="17" y1="7" x2="22" y2="7"></line>
-              </svg>
-              <span class="badge badge-placeholder">Portfolio Asset Pending</span>
-              <p class="portfolio-placeholder-text">16:9 Cinematic Video Preview</p>
-            </div>
-            <div class="portfolio-card-content">
-              <div class="portfolio-card-category">Wedding &amp; Event</div>
-              <h3 class="portfolio-card-title">Cinematic Wedding Highlights</h3>
-              <p class="portfolio-card-status">Official project media will be published after owner approval.</p>
-            </div>
-          </div>
-
-          <!-- Sample Slot 2: Video Mixing Sample (16:9 Horizontal) -->
-          <div class="portfolio-placeholder-card">
-            <div class="portfolio-media-box">
-              <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                <polyline points="2 17 12 22 22 17"></polyline>
-                <polyline points="2 12 12 17 22 12"></polyline>
-              </svg>
-              <span class="badge badge-placeholder">Portfolio Asset Pending</span>
-              <p class="portfolio-placeholder-text">16:9 Studio Mixing Composite</p>
-            </div>
-            <div class="portfolio-card-content">
-              <div class="portfolio-card-category">Video Mixing</div>
-              <h3 class="portfolio-card-title">Stage &amp; Cultural Event Mixing</h3>
-              <p class="portfolio-card-status">Multi-camera mixing footage pending owner supply.</p>
-            </div>
-          </div>
-
-          <!-- Sample Slot 3: Commercial Reel (9:16 Vertical on Right Side) -->
-          <div class="portfolio-placeholder-card">
-            <div class="portfolio-media-box">
-              <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-              </svg>
-              <span class="badge badge-placeholder">Portfolio Asset Pending</span>
-              <p class="portfolio-placeholder-text">9:16 Vertical Reel Showcase</p>
-            </div>
-            <div class="portfolio-card-content">
-              <div class="portfolio-card-category">Reels &amp; Promos</div>
-              <h3 class="portfolio-card-title">Short-Form Commercial Reel</h3>
-              <p class="portfolio-card-status">Vertical video preview awaiting owner upload.</p>
-            </div>
-          </div>
-
+        <!-- Loading State Indicator -->
+        <div id="homePortfolioLoading" class="portfolio-loading-state" role="status" aria-live="polite">
+          <div class="portfolio-loading-spinner" aria-hidden="true"></div>
+          <p class="portfolio-loading-text">Loading featured work...</p>
         </div>
 
-        <div style="text-align: center; margin-top: var(--space-8);">
+        <!-- Empty State: Published Projects Exist But None Featured -->
+        <div id="homePortfolioEmptyNoFeatured" class="portfolio-empty-state" style="display: none;">
+          <svg class="portfolio-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+            <line x1="7" y1="2" x2="7" y2="22"></line>
+            <line x1="17" y1="2" x2="17" y2="22"></line>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">No Featured Projects Yet</h3>
+          <p class="portfolio-empty-desc">
+            Explore our full showcase of creative video editing, mixing, and promotional work in the portfolio hub.
+          </p>
+          <a href="portfolio/" class="btn btn-secondary">
+            Explore Full Portfolio Hub &rarr;
+          </a>
+        </div>
+
+        <!-- Empty State: Zero Published Projects -->
+        <div id="homePortfolioEmptyNoProjects" class="portfolio-empty-state" style="display: none;">
+          <svg class="portfolio-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+            <line x1="7" y1="2" x2="7" y2="22"></line>
+            <line x1="17" y1="2" x2="17" y2="22"></line>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">No Projects Yet</h3>
+          <p class="portfolio-empty-desc">
+            We're preparing our portfolio. Check back soon to see our latest creative work.
+          </p>
+          <a href="#contact" class="btn btn-secondary">
+            Discuss Your Project &rarr;
+          </a>
+        </div>
+
+        <!-- Connection Error State -->
+        <div id="homePortfolioError" class="portfolio-empty-state portfolio-error-state" style="display: none;" role="alert">
+          <svg class="portfolio-empty-icon portfolio-error-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-red)" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">Unable to Load Portfolio</h3>
+          <p class="portfolio-empty-desc">
+            We couldn’t connect to the portfolio service right now. Please check your connection and try again.
+          </p>
+          <button type="button" id="homePortfolioRetryBtn" class="btn btn-primary">
+            Retry Connection
+          </button>
+        </div>
+
+        <!-- Featured Portfolio Grid (Populated dynamically from Supabase) -->
+        <div class="portfolio-grid" style="display: none;"></div>
+
+        <div id="homePortfolioCta" style="text-align: center; margin-top: var(--space-8); display: none;">
           <a href="portfolio/" class="btn btn-secondary">
             Explore Full Portfolio Hub &rarr;
           </a>

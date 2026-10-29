@@ -463,12 +463,12 @@ function escapeHTML(str) {
  */
 function initPortfolioFilters() {
   const filterButtons = document.querySelectorAll('.portfolio-filter-btn');
-  const portfolioItems = document.querySelectorAll('.portfolio-card-item');
+  // Portfolio items queried dynamically on filter click to support Supabase-loaded cards
   const emptyState = document.getElementById('portfolioEmptyState');
   const horizontalSide = document.getElementById('portfolioHorizontalSide');
   const verticalSide = document.getElementById('portfolioVerticalSide');
 
-  if (!filterButtons.length || !portfolioItems.length) return;
+  if (!filterButtons.length) return;
 
   filterButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -486,7 +486,9 @@ function initPortfolioFilters() {
       let visibleHorizontal = 0;
       let visibleVertical = 0;
 
-      portfolioItems.forEach((item) => {
+      const currentItems = document.querySelectorAll('.portfolio-card-item');
+
+      currentItems.forEach((item) => {
         const itemCategory = item.getAttribute('data-category');
         const matches = selectedCategory === 'all' || itemCategory === selectedCategory;
 

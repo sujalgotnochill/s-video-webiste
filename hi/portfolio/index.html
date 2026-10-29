@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="hi">
 
 <head>
@@ -220,11 +220,55 @@
             <button type="button" class="portfolio-filter-btn" data-filter="mixing" aria-pressed="false">
               वीडियो मिक्सिंग
             </button>
+            <button type="button" class="portfolio-filter-btn" data-filter="other" aria-pressed="false">
+              अन्य
+            </button>
           </div>
         </div>
 
+        <!-- Loading State Indicator -->
+        <div id="portfolioLoading" class="portfolio-loading-state" role="status" aria-live="polite">
+          <div class="portfolio-loading-spinner" aria-hidden="true"></div>
+          <p class="portfolio-loading-text">पोर्टफोलियो लोड हो रहा है...</p>
+        </div>
+
+        <!-- Zero Published Projects Empty State -->
+        <div id="portfolioGlobalEmpty" class="portfolio-empty-state" style="display: none;">
+          <svg class="portfolio-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+            <line x1="7" y1="2" x2="7" y2="22"></line>
+            <line x1="17" y1="2" x2="17" y2="22"></line>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">अभी कोई प्रोजेक्ट नहीं</h3>
+          <p class="portfolio-empty-desc">
+            हम अपना पोर्टफोलियो तैयार कर रहे हैं। हमारा नया क्रिएटिव काम देखने के लिए जल्द ही फिर आएँ।
+          </p>
+          <a href="../contact/" class="btn btn-secondary">
+            अपने प्रोजेक्ट पर चर्चा करें &rarr;
+          </a>
+        </div>
+
+        <!-- Connection Error State -->
+        <div id="portfolioError" class="portfolio-empty-state portfolio-error-state" style="display: none;" role="alert">
+          <svg class="portfolio-empty-icon portfolio-error-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-red)" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">पोर्टफोलियो लोड करने में असमर्थ</h3>
+          <p class="portfolio-empty-desc">
+            इस समय पोर्टफोलियो सेवा से कनेक्ट नहीं हो पा रहा है। कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें।
+          </p>
+          <button type="button" id="portfolioRetryBtn" class="btn btn-primary">
+            पुनः प्रयास करें
+          </button>
+        </div>
+
         <!-- Portfolio Cards Split Layout: Horizontal on Left, Vertical on Right -->
-        <div class="portfolio-split-layout" id="portfolioGrid">
+        <div class="portfolio-split-layout" id="portfolioGrid" style="display: none;">
 
           <!-- Left Side: Widescreen Landscape Projects (16:9) -->
           <div class="portfolio-side-horizontal" id="portfolioHorizontalSide">
@@ -233,144 +277,10 @@
                 <span class="badge badge-neutral">16:9 वाइडस्क्रीन</span>
                 <span class="portfolio-side-title">लैंडस्केप एवं इवेंट फॉर्मेट्स</span>
               </div>
-              <span class="portfolio-side-count">6 फॉर्मेट्स</span>
+              <span class="portfolio-side-count"></span>
             </div>
 
-            <div class="portfolio-horizontal-grid">
-
-              <!-- Card 1: Cinematic Long-Form Video Edit (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="editing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                    <line x1="7" y1="2" x2="7" y2="22"></line>
-                    <line x1="17" y1="17" x2="22" y2="17"></line>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <line x1="2" y1="7" x2="7" y2="7"></line>
-                    <line x1="17" y1="7" x2="22" y2="7"></line>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">16:9 सिनेमैटिक वीडियो फॉर्मेट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">वीडियो एडिटिंग</div>
-                  <h3 class="portfolio-card-title">सिनेमैटिक लॉन्ग-फॉर्म वीडियो एडिट</h3>
-                  <p class="portfolio-card-desc">
-                    लॉन्ग-फॉर्म नैरेटिव कंटेंट के लिए मल्टी-ट्रैक टाइमलाइन कटिंग, कलर ग्रेडिंग और ऑडियो सिंक्रोनाइजेशन।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: वीडियो एडिटिंग &bull; 16:9 फॉर्मेट प्रिव्यू</span>
-                </div>
-              </article>
-
-              <!-- Card 2: Wedding Highlights Master (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="wedding">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">16:9 सिनेमैटिक वेडिंग फिल्म फॉर्मेट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">वेडिंग एवं इवेंट्स</div>
-                  <h3 class="portfolio-card-title">वेडिंग सेरेमनी हाइलाइट्स मास्टर</h3>
-                  <p class="portfolio-card-desc">
-                    विवाह और सगाई समारोह के खास पलों को सिनेमैटिक पेसिंग, कलर पैलेट और बैकग्राउंड संगीत के साथ प्रस्तुत करने वाली फिल्म।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: वेडिंग एवं इवेंट्स &bull; 16:9 सिनेमैटिक प्रिव्यू</span>
-                </div>
-              </article>
-
-              <!-- Card 3: Multi-Camera Stage Mixing (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="mixing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                    <polyline points="2 17 12 22 22 17"></polyline>
-                    <polyline points="2 12 12 17 22 12"></polyline>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">16:9 स्टूडियो मिक्सिंग कंपोजिट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">वीडियो मिक्सिंग</div>
-                  <h3 class="portfolio-card-title">मल्टी-कैमरा स्टेज मिक्सिंग कंपोजिट</h3>
-                  <p class="portfolio-card-desc">
-                    मंच कार्यक्रमों के लिए मल्टी-एंगल वीडियो फुटेज सिंक्रोनाइजेशन, पारंपरिक ट्रांजीशन और ऑडियो संयोजन।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: वीडियो मिक्सिंग &bull; मल्टी-एंगल प्रिव्यू</span>
-                </div>
-              </article>
-
-              <!-- Card 4: Corporate & Interview Profile Cut (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="editing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">16:9 हाई-डेफिनिशन प्रोफाइल फॉर्मेट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">वीडियो एडिटिंग</div>
-                  <h3 class="portfolio-card-title">इंटरव्यू एवं प्रोफाइल वीडियो एडिट</h3>
-                  <p class="portfolio-card-desc">
-                    डिजिटल प्लेटफॉर्म्स और प्रस्तुतियों के लिए लोअर-थर्ड्स, ऑडियो क्लीनअप और कलर-बैलेंस्ड इंटरव्यू कटिंग।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: वीडियो एडिटिंग &bull; 16:9 प्रोफाइल प्रिव्यू</span>
-                </div>
-              </article>
-
-              <!-- Card 5: Traditional Rituals Event Archive (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="wedding">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 8v8M8 12h8"></path>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">16:9 समारोह आर्काइव फॉर्मेट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">वेडिंग एवं इवेंट्स</div>
-                  <h3 class="portfolio-card-title">पारंपरिक समारोह आर्काइव संपादन</h3>
-                  <p class="portfolio-card-desc">
-                    पारंपरिक रस्मों की संपूर्ण रिकॉर्डिंग, बहु-चरणीय आयोजन आर्काइविंग और पारिवारिक यादों का दीर्घकालिक संपादन।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: वेडिंग एवं इवेंट्स &bull; 16:9 आर्काइव प्रिव्यू</span>
-                </div>
-              </article>
-
-              <!-- Card 6: Cultural Festival Stage Performance (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="mixing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">16:9 स्टेज परफॉर्मेंस फॉर्मेट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">वीडियो मिक्सिंग</div>
-                  <h3 class="portfolio-card-title">सांस्कृतिक आयोजन मल्टी-एंगल मिक्स</h3>
-                  <p class="portfolio-card-desc">
-                    सांस्कृतिक संध्या, भजन कीर्तन और सार्वजनिक सम्मेलनों के लिए बहु-कोणीय कैमरा संयोजन और ऑडियो संतुलन।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: वीडियो मिक्सिंग &bull; स्टेज एवं इवेंट प्रिव्यू</span>
-                </div>
-              </article>
-
-            </div>
+            <div class="portfolio-horizontal-grid"></div>
           </div>
 
           <!-- Right Side: Vertical / Short-Form Reels & Promos (9:16) -->
@@ -378,65 +288,32 @@
             <div class="portfolio-side-header">
               <div class="portfolio-side-title-wrap">
                 <span class="badge badge-primary">9:16 वर्टिकल</span>
-                <span class="portfolio-side-title">रील्स एवं मोबाइल शॉर्ट्स</span>
+                <span class="portfolio-side-title">रील्स एवं मोबाइल प्रोमोज</span>
               </div>
-              <span class="portfolio-side-count">2 फॉर्मेट्स</span>
+              <span class="portfolio-side-count"></span>
             </div>
 
-            <div class="portfolio-vertical-grid">
-
-              <!-- Card V1: Vertical Reel with Kinetic Captions (9:16) -->
-              <article class="portfolio-card-item portfolio-placeholder-card portfolio-placeholder-card--vertical"
-                data-category="reels">
-                <div class="portfolio-media-box portfolio-media-box--vertical">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                    <polygon points="10 8 15 11 10 14 10 8"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">9:16 वर्टिकल रील फॉर्मेट</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">रील्स और प्रोमोज</div>
-                  <h3 class="portfolio-card-title">9:16 वर्टिकल रील एवं काइनेटिक टाइटल्स</h3>
-                  <p class="portfolio-card-desc">
-                    इंस्टाग्राम और यूट्यूब शॉर्ट्स के लिए शुरुआती विजुअल हुक्स, काइनेटिक सबटाइटल्स और बीट-सिंक ऑडियो कटिंग।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: रील्स और प्रोमोज &bull; 9:16 वर्टिकल प्रिव्यू</span>
-                </div>
-              </article>
-
-              <!-- Card V2: Commercial & Social Promo Clip (9:16) -->
-              <article class="portfolio-card-item portfolio-placeholder-card portfolio-placeholder-card--vertical"
-                data-category="reels">
-                <div class="portfolio-media-box portfolio-media-box--vertical">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">फॉर्मेट प्रिव्यू</span>
-                  <p class="portfolio-placeholder-text">9:16 सोशल फीड प्रोमो</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">रील्स और प्रोमोज</div>
-                  <h3 class="portfolio-card-title">9:16 कमर्शियल एवं सोशल प्रोमो रील</h3>
-                  <p class="portfolio-card-desc">
-                    स्थानीय स्टोर्स, ब्रांड्स और नए प्रोडक्ट्स के प्रचार के लिए मोबाइल-अनुकूलित वर्टिकल वीडियो प्रोमो।
-                  </p>
-                  <span class="portfolio-card-status">श्रेणी: रील्स और प्रोमोज &bull; 9:16 प्रोमो प्रिव्यू</span>
-                </div>
-              </article>
-
-            </div>
+            <div class="portfolio-vertical-grid"></div>
           </div>
 
         </div>
 
         <!-- Accessible Empty State Message for Filter -->
         <div id="portfolioEmptyState" class="portfolio-empty-state" hidden style="display: none;">
-          <p class="portfolio-empty-text">इस श्रेणी में अभी कोई फॉर्मेट उपलब्ध नहीं है।</p>
+          <svg class="portfolio-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+            <line x1="7" y1="2" x2="7" y2="22"></line>
+            <line x1="17" y1="2" x2="17" y2="22"></line>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">इस श्रेणी में अभी कोई प्रोजेक्ट नहीं</h3>
+          <p class="portfolio-empty-desc">
+            हम इस श्रेणी के लिए प्रोजेक्ट फुटेज तैयार कर रहे हैं। क्या आपकी इस क्षेत्र में कोई आवश्यकता है?
+          </p>
+          <a href="../contact/" class="btn btn-secondary">
+            इस सेवा के बारे में पूछताछ करें &rarr;
+          </a>
         </div>
 
         <!-- Client Privacy & Content Integrity Note -->

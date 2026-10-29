@@ -15,9 +15,9 @@
   // ============================================================================
   const DEFAULT_CONFIG = {
     // e.g. 'https://xyzcompany.supabase.co'
-    url: window.ENV_SUPABASE_URL || 'YOUR_SUPABASE_PROJECT_URL',
+    url: window.ENV_SUPABASE_URL || 'https://babfkmmaoijjyidepnfr.supabase.co',
     // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-    anonKey: window.ENV_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY'
+    anonKey: window.ENV_SUPABASE_ANON_KEY || 'sb_publishable_QhH1EF8FlerGBH4SmQyqqQ_dHc44je4'
   };
 
   // Optional localStorage overrides for seamless developer / local testing

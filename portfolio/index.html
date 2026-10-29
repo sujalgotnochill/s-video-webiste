@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -114,7 +114,8 @@
         <span class="lang-btn active" aria-current="true">English</span>
         <a href="../hi/portfolio/" class="lang-btn" style="text-decoration: none;">हिन्दी</a>
       </div>
-      <a href="https://wa.me/919425158458?text=Hi%20S.%20Video%20Creation%2C%20I%27d%20like%20to%20enquire%20about%20your%20services." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">WhatsApp Us</a>
+      <a href="https://wa.me/919425158458?text=Hi%20S.%20Video%20Creation%2C%20I%27d%20like%20to%20enquire%20about%20your%20services."
+        target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">WhatsApp Us</a>
       <a href="tel:+919425158458" class="btn btn-secondary">Call: +91 94251 58458</a>
     </div>
   </nav>
@@ -190,7 +191,8 @@
         </div>
 
         <!-- Transparent Portfolio Verification Notice -->
-        <div class="advisory-box" role="note" aria-labelledby="portfolioNoticeHeading" style="margin-bottom: var(--space-8);">
+        <div class="advisory-box" role="note" aria-labelledby="portfolioNoticeHeading"
+          style="margin-bottom: var(--space-8);">
           <h3 id="portfolioNoticeHeading" class="advisory-box-title" style="font-size: var(--text-base);">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-red)" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -201,7 +203,9 @@
             Portfolio Preview &amp; Verification Notice
           </h3>
           <p class="advisory-box-desc">
-            Client project footage is being catalogued with customer permissions. The showcase slots below illustrate the video formats (16:9 widescreen and 9:16 vertical), editing workflows, and production styles handled by S. Video Creation. Verified client media will appear here upon owner confirmation.
+            Client project footage is being catalogued with customer permissions. The showcase slots below illustrate
+            the video formats (16:9 widescreen and 9:16 vertical), editing workflows, and production styles handled by
+            S. Video Creation. Verified client media will appear here upon owner confirmation.
           </p>
         </div>
 
@@ -223,11 +227,55 @@
             <button type="button" class="portfolio-filter-btn" data-filter="mixing" aria-pressed="false">
               Video Mixing
             </button>
+            <button type="button" class="portfolio-filter-btn" data-filter="other" aria-pressed="false">
+              Other
+            </button>
           </div>
         </div>
 
+        <!-- Loading State Indicator -->
+        <div id="portfolioLoading" class="portfolio-loading-state" role="status" aria-live="polite">
+          <div class="portfolio-loading-spinner" aria-hidden="true"></div>
+          <p class="portfolio-loading-text">Loading portfolio showcase...</p>
+        </div>
+
+        <!-- Zero Published Projects Empty State -->
+        <div id="portfolioGlobalEmpty" class="portfolio-empty-state" style="display: none;">
+          <svg class="portfolio-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+            <line x1="7" y1="2" x2="7" y2="22"></line>
+            <line x1="17" y1="2" x2="17" y2="22"></line>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">No Projects Yet</h3>
+          <p class="portfolio-empty-desc">
+            We're preparing our portfolio. Check back soon to see our latest creative work.
+          </p>
+          <a href="../contact/" class="btn btn-secondary">
+            Discuss Your Project &rarr;
+          </a>
+        </div>
+
+        <!-- Connection Error State -->
+        <div id="portfolioError" class="portfolio-empty-state portfolio-error-state" style="display: none;" role="alert">
+          <svg class="portfolio-empty-icon portfolio-error-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-red)" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3 class="portfolio-empty-title">Unable to Load Portfolio</h3>
+          <p class="portfolio-empty-desc">
+            We couldn’t connect to the portfolio service right now. Please check your connection and try again.
+          </p>
+          <button type="button" id="portfolioRetryBtn" class="btn btn-primary">
+            Retry Connection
+          </button>
+        </div>
+
         <!-- Portfolio Cards Split Layout: Horizontal on Left, Vertical on Right -->
-        <div class="portfolio-split-layout" id="portfolioGrid">
+        <div class="portfolio-split-layout" id="portfolioGrid" style="display: none;">
 
           <!-- Left Side: Widescreen Landscape Projects (16:9) -->
           <div class="portfolio-side-horizontal" id="portfolioHorizontalSide">
@@ -236,142 +284,10 @@
                 <span class="badge badge-neutral">16:9 Widescreen</span>
                 <span class="portfolio-side-title">Landscape &amp; Event Formats</span>
               </div>
-              <span class="portfolio-side-count">6 Formats</span>
+              <span class="portfolio-side-count"></span>
             </div>
 
-            <div class="portfolio-horizontal-grid">
-
-              <!-- Card 1: Cinematic Long-Form Video Edit (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="editing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                    <line x1="7" y1="2" x2="7" y2="22"></line>
-                    <line x1="17" y1="17" x2="22" y2="17"></line>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <line x1="2" y1="7" x2="7" y2="7"></line>
-                    <line x1="17" y1="7" x2="22" y2="7"></line>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">16:9 Cinematic Video Format</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Video Editing</div>
-                  <h3 class="portfolio-card-title">Cinematic Long-Form Video Edit</h3>
-                  <p class="portfolio-card-desc">
-                    Multi-track timeline cutting, color grading polish, and audio synchronization for long-form narrative content.
-                  </p>
-                  <span class="portfolio-card-status">Category: Video Editing &bull; 16:9 Format Preview</span>
-                </div>
-              </article>
-
-              <!-- Card 2: Wedding Highlights Master (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="wedding">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">16:9 Cinematic Wedding Film Format</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Wedding &amp; Events</div>
-                  <h3 class="portfolio-card-title">Wedding Ceremony Highlights Master</h3>
-                  <p class="portfolio-card-desc">
-                    Ceremony highlight editing, cinematic color palette, emotional audio balance, and celebration master cut.
-                  </p>
-                  <span class="portfolio-card-status">Category: Wedding &amp; Events &bull; 16:9 Cinematic Preview</span>
-                </div>
-              </article>
-
-              <!-- Card 3: Multi-Camera Stage Mixing (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="mixing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                    <polyline points="2 17 12 22 22 17"></polyline>
-                    <polyline points="2 12 12 17 22 12"></polyline>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">16:9 Studio Mixing Composite</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Video Mixing</div>
-                  <h3 class="portfolio-card-title">Multi-Camera Stage Mixing Composite</h3>
-                  <p class="portfolio-card-desc">
-                    Multi-angle recorded footage synchronization, celebratory ceremony transitions, and stage perspective cuts.
-                  </p>
-                  <span class="portfolio-card-status">Category: Video Mixing &bull; Multi-Angle Preview</span>
-                </div>
-              </article>
-
-              <!-- Card 4: Corporate & Interview Profile Cut (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="editing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">16:9 High-Definition Profile Format</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Video Editing</div>
-                  <h3 class="portfolio-card-title">Interview &amp; Corporate Profile Cut</h3>
-                  <p class="portfolio-card-desc">
-                    High-definition interview and corporate profile assembly with branded lower thirds and audio sweetening.
-                  </p>
-                  <span class="portfolio-card-status">Category: Video Editing &bull; 16:9 Profile Preview</span>
-                </div>
-              </article>
-
-              <!-- Card 5: Traditional Rituals Event Archive (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="wedding">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">16:9 Ceremonial Archive Format</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Wedding &amp; Events</div>
-                  <h3 class="portfolio-card-title">Traditional Rituals Event Archive</h3>
-                  <p class="portfolio-card-desc">
-                    Traditional ritual documentation, multi-part event archiving, and family memory preservation editing.
-                  </p>
-                  <span class="portfolio-card-status">Category: Wedding &amp; Events &bull; 16:9 Archive Preview</span>
-                </div>
-              </article>
-
-              <!-- Card 6: Cultural Festival Stage Performance (16:9) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="mixing">
-                <div class="portfolio-media-box">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">16:9 Stage Performance Format</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Video Mixing</div>
-                  <h3 class="portfolio-card-title">Cultural Festival &amp; Stage Performance Mix</h3>
-                  <p class="portfolio-card-desc">
-                    Cultural festival and stage performance multi-camera composite with live audio stem balance.
-                  </p>
-                  <span class="portfolio-card-status">Category: Video Mixing &bull; Stage &amp; Event Preview</span>
-                </div>
-              </article>
-
-            </div>
+            <div class="portfolio-horizontal-grid"></div>
           </div>
 
           <!-- Right Side: Vertical / Short-Form Reels & Promos (9:16) -->
@@ -381,54 +297,10 @@
                 <span class="badge badge-primary">9:16 Vertical</span>
                 <span class="portfolio-side-title">Reels &amp; Mobile Promos</span>
               </div>
-              <span class="portfolio-side-count">2 Formats</span>
+              <span class="portfolio-side-count"></span>
             </div>
 
-            <div class="portfolio-vertical-grid">
-
-              <!-- Card 7: Vertical Reel with Kinetic Captions (9:16) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="reels">
-                <div class="portfolio-media-box portfolio-media-box--vertical">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                    <polygon points="10 8 15 11 10 14 10 8"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">9:16 Vertical Reel Showcase</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Reels &amp; Promos</div>
-                  <h3 class="portfolio-card-title">Vertical Reel with Kinetic Captions</h3>
-                  <p class="portfolio-card-desc">
-                    Vertical short-form cut featuring opening visual hook design, kinetic captions, and beat-matched audio rhythm.
-                  </p>
-                  <span class="portfolio-card-status">Category: Reels &amp; Promos &bull; 9:16 Vertical Preview</span>
-                </div>
-              </article>
-
-              <!-- Card 8: Commercial & Social Promo Clip (9:16) -->
-              <article class="portfolio-card-item portfolio-placeholder-card" data-category="reels">
-                <div class="portfolio-media-box portfolio-media-box--vertical">
-                  <svg class="portfolio-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                  </svg>
-                  <span class="badge badge-placeholder">WORKFLOW FORMAT PREVIEW</span>
-                  <p class="portfolio-placeholder-text">9:16 Social Feed Promo</p>
-                </div>
-                <div class="portfolio-card-content">
-                  <div class="portfolio-card-category">Reels &amp; Promos</div>
-                  <h3 class="portfolio-card-title">Commercial &amp; Social Promo Clip</h3>
-                  <p class="portfolio-card-desc">
-                    Mobile-first commercial promotional clip optimized for social media feeds with bold titling and sound design.
-                  </p>
-                  <span class="portfolio-card-status">Category: Reels &amp; Promos &bull; 9:16 Promo Preview</span>
-                </div>
-              </article>
-
-            </div>
+            <div class="portfolio-vertical-grid"></div>
           </div>
 
         </div>
@@ -444,7 +316,8 @@
           </svg>
           <h3 class="portfolio-empty-title">No Projects in This Category Yet</h3>
           <p class="portfolio-empty-desc">
-            We are actively preparing project previews and footage for this section. Have an upcoming requirement in this
+            We are actively preparing project previews and footage for this section. Have an upcoming requirement in
+            this
             domain?
           </p>
           <a href="../contact/" class="btn btn-secondary">
@@ -500,15 +373,16 @@
         <div>
           <a href="../" class="brand-logo-link brand-logo-link--footer"
             aria-label="S. Video Creation - The Edit Station Home">
-            <img src="../assets/images/brand/s-video-creation-horizontal.png"
-              alt="S. Video Creation — The Edit Station" class="brand-logo-img brand-logo-img--footer" width="2752"
-              height="1536" loading="lazy">
+            <img src="../assets/images/brand/s-video-creation-horizontal.png" alt="S. Video Creation — The Edit Station"
+              class="brand-logo-img brand-logo-img--footer" width="2752" height="1536" loading="lazy">
           </a>
           <p class="footer-meta-text">
             Professional creative studio specializing in video editing, reels, video mixing, wedding coverage, data
             recovery, and software sales in Katni, Madhya Pradesh.
           </p>
-          <span class="badge" style="background-color: rgba(255, 255, 255, 0.05); color: var(--color-brand-white); border: 1px solid var(--color-border);">The Edit Station &bull; Katni</span>
+          <span class="badge"
+            style="background-color: rgba(255, 255, 255, 0.05); color: var(--color-brand-white); border: 1px solid var(--color-border);">The
+            Edit Station &bull; Katni</span>
         </div>
 
         <!-- Quick Links -->
@@ -545,13 +419,21 @@
             Katni, Madhya Pradesh 483501, India
           </p>
           <p class="footer-meta-text" style="margin-bottom: var(--space-3);">
-            <a href="tel:+919425158458" class="footer-link" style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-brand-white); font-weight: var(--font-weight-medium);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <a href="tel:+919425158458" class="footer-link"
+              style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-brand-white); font-weight: var(--font-weight-medium);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                </path>
+              </svg>
               +91 94251 58458
             </a>
           </p>
           <p class="footer-meta-text" style="margin-bottom: var(--space-4);">
-            <a href="https://www.google.com/maps/dir//S.+Video+Creation,+Shopping+Complex,+Gole+Bazar,+Katni,+Madhya+Pradesh+483501/@23.8358531,80.3942008,17z/data=!4m17!1m7!3m6!1s0x398161da4b9945b7:0x40d4fdf375a88126!2sS.+Video+Creation!8m2!3d23.8358482!4d80.3967757!16s%2Fg%2F11g81qvw8_!4m8!1m0!1m5!1m1!1s0x398161da4b9945b7:0x40d4fdf375a88126!2m2!1d80.3967757!2d23.8358482!3e2?hl=en-IN&amp;entry=ttu&amp;g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="footer-link" style="color: var(--color-brand-red); font-weight: var(--font-weight-semibold);">
+            <a href="https://www.google.com/maps/dir//S.+Video+Creation,+Shopping+Complex,+Gole+Bazar,+Katni,+Madhya+Pradesh+483501/@23.8358531,80.3942008,17z/data=!4m17!1m7!3m6!1s0x398161da4b9945b7:0x40d4fdf375a88126!2sS.+Video+Creation!8m2!3d23.8358482!4d80.3967757!16s%2Fg%2F11g81qvw8_!4m8!1m0!1m5!1m1!1s0x398161da4b9945b7:0x40d4fdf375a88126!2m2!1d80.3967757!2d23.8358482!3e2?hl=en-IN&amp;entry=ttu&amp;g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank" rel="noopener noreferrer" class="footer-link"
+              style="color: var(--color-brand-red); font-weight: var(--font-weight-semibold);">
               Get Directions &rarr;
             </a>
           </p>
