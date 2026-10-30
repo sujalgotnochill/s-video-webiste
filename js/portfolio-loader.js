@@ -410,6 +410,12 @@
     content.appendChild(statusEl);
 
     card.appendChild(content);
+
+    // Register with scroll reveal system if active
+    if (typeof window.registerScrollReveal === 'function') {
+      window.registerScrollReveal(card);
+    }
+
     return card;
   }
 
