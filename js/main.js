@@ -5,12 +5,14 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initAmbientField();
   initMobileNavigation();
   initHeaderScrollState();
   initActiveNavigation();
   initPlaceholderInteractions();
   initPortfolioFilters();
   initCatalogueNav();
+  initScrollReveals();
 });
 
 /**
@@ -609,5 +611,666 @@ function initCatalogueNav() {
 
     sections.forEach((sec) => observer.observe(sec));
   }
+}
+
+/**
+ * Scroll-Triggered Reveal Animations
+ * Premium, minimal entrance reveals powered by a single shared IntersectionObserver.
+ *
+ * Safeguards:
+ * - Content is 100% visible if JavaScript is disabled or fails (html.js-reveal-active is only applied after support verification)
+ * - Respects prefers-reduced-motion: reduce
+ * - Above-the-fold content is revealed immediately to prevent any flash or delay
+ * - Modest staggered delays (50-60ms) capped per row
+ * - Elements are revealed once and immediately unobserved
+ * - Reveal classes are cleaned up upon transition completion so hover/focus run 100% native
+ */
+function initScrollReveals() {
+  if (typeof window === 'undefined') return;
+
+  // Reduced motion check
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) return;
+
+  // IntersectionObserver feature check
+  if (!('IntersectionObserver' in window)) return;
+
+  const targetSelector = [
+    '.section-header',
+    '.service-card',
+    '.portfolio-placeholder-card',
+    '.portfolio-card-item',
+    '.product-card',
+    '.catalogue-card',
+    '.contact-card',
+    '.use-case-card',
+    '.process-card',
+    '.about-box',
+    '.about-feature-item',
+    '.advisory-box',
+    '.notice-box',
+    '.reveal-on-scroll'
+  ].join(', ');
+
+  const targets = document.querySelectorAll(targetSelector);
+  if (!targets.length) return;
+
+  // Activate CSS reveal system
+  document.documentElement.classList.add('js-reveal-active');
+
+  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+  // Single shared observer
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        el.classList.add('is-revealed');
+        observer.unobserve(el);
+
+        // After reveal transition completes, clean up reveal classes and delay
+        // so hover, focus, and base transitions run 100% native with zero cascade conflicts
+        const delay = parseFloat(el.style.getPropertyValue('--reveal-delay')) || 0;
+        setTimeout(() => {
+          el.classList.remove('reveal-item', 'is-revealed');
+          el.style.removeProperty('--reveal-delay');
+        }, delay + 450);
+      }
+    });
+  }, {
+    rootMargin: '0px 0px -50px 0px',
+    threshold: 0.1
+  });
+
+  // Calculate subtle stagger delay for child items inside grids
+  const gridSelectors = [
+    '.services-grid',
+    '.portfolio-grid',
+    '.portfolio-horizontal-grid',
+    '.portfolio-vertical-grid',
+    '.products-grid',
+    '.catalogue-grid',
+    '.catalogue-grid--4',
+    '.contact-grid',
+    '.use-cases-grid',
+    '.process-grid',
+    '.about-features-list',
+    '.related-services-grid'
+  ];
+
+  gridSelectors.forEach((selector) => {
+    const grids = document.querySelectorAll(selector);
+    grids.forEach((grid) => {
+      const items = Array.from(grid.children).filter(el => !el.classList.contains('is-hidden'));
+      const isFourCol = grid.classList.contains('catalogue-grid--4') || grid.classList.contains('process-grid');
+      const modulo = isFourCol ? 4 : 3;
+      const step = isFourCol ? 50 : 60;
+      items.forEach((item, index) => {
+        const delay = (index % modulo) * step;
+        item.style.setProperty('--reveal-delay', `${delay}ms`);
+      });
+    });
+  });
+
+  targets.forEach((target) => {
+    target.classList.add('reveal-item');
+    const rect = target.getBoundingClientRect();
+    // If element is already well within the initial visible viewport, reveal immediately
+    // Elements lower down near or past the fold wait to reveal smoothly as the user scrolls
+    if (rect.top < windowHeight * 0.65) {
+      target.classList.add('is-revealed');
+      setTimeout(() => {
+        target.classList.remove('reveal-item', 'is-revealed');
+        target.style.removeProperty('--reveal-delay');
+      }, 450);
+    } else {
+      revealObserver.observe(target);
+    }
+  });
+
+  // Expose registration hook for dynamically loaded elements (e.g. Supabase portfolio cards)
+  window.registerScrollReveal = function (el) {
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!document.documentElement.classList.contains('js-reveal-active')) return;
+
+    el.classList.add('reveal-item');
+    const rect = el.getBoundingClientRect();
+    if (rect.top < windowHeight * 0.65) {
+      el.classList.add('is-revealed');
+      setTimeout(() => {
+        el.classList.remove('reveal-item', 'is-revealed');
+        el.style.removeProperty('--reveal-delay');
+      }, 450);
+    } else {
+      revealObserver.observe(el);
+    }
+  };
+}
+
+/**
+ * Crimson Northern Lights / Aurora Borealis (Motion Batch 2 — Fluid Light Field)
+ *
+ * Visual Characteristics:
+ * - Pure charcoal/black background (#151515) remains dominant.
+ * - Fluid, silky curtains of deep crimson and red light continuously flowing across the dark space.
+ * - Light stretches, bends, folds and morphs organically like real northern lights in the night sky.
+ * - Physical mouse interaction: cursor movement physically deflects and creates fluid ripples along the
+ *   auroral curtains over a wide area, smoothly recovering with spring damping.
+ * - Absolutely zero cursor circles, spotlights, pointer halos, particles, or dots.
+ * - High performance: internal 0.5x render scaling with GPU hardware bilinear upscaling, RAF pause on tab hide.
+ * - Accessibility: full prefers-reduced-motion support (single static frame rendered, zero animation loop).
+ */
+function initAmbientField() {
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Clean up deprecated DOM elements if present
+  const oldField = document.getElementById('ambientLightField');
+  if (oldField) oldField.remove();
+  const oldCanvas = document.getElementById('ambientCanvas');
+  if (oldCanvas) oldCanvas.remove();
+
+  // Ensure aurora canvas exists at the root of body
+  let canvas = document.getElementById('ambientAurora');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    canvas.id = 'ambientAurora';
+    canvas.className = 'ambient-aurora-canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    document.body.prepend(canvas);
+  }
+
+  // Touch capability detection
+  const coarseQuery = window.matchMedia('(pointer: coarse)');
+  let isCoarse = coarseQuery.matches;
+  coarseQuery.addEventListener('change', (e) => {
+    isCoarse = e.matches;
+    if (isCoarse) {
+      targetActive = 0;
+      mouseActive = 0;
+    }
+  });
+
+  // Try initializing WebGL
+  const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true }) ||
+             canvas.getContext('experimental-webgl', { alpha: true, antialias: false, premultipliedAlpha: true });
+
+  if (gl) {
+    initWebGLAurora(gl, canvas, motionQuery, isCoarse);
+  } else {
+    // Graceful 2D Canvas fallback
+    init2DAuroraFallback(canvas, motionQuery, isCoarse);
+  }
+}
+
+/**
+ * WebGL Volumetric Silky Aurora Engine — Subtle & Refined
+ */
+function initWebGLAurora(gl, canvas, motionQuery, isCoarse) {
+  const vsSource = `
+    attribute vec2 a_position;
+    varying vec2 v_uv;
+    void main() {
+      v_uv = (a_position + 1.0) * 0.5;
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  `;
+
+  const fsSource = `
+    precision highp float;
+    varying vec2 v_uv;
+
+    uniform vec2 u_resolution;
+    uniform float u_time;
+    uniform vec2 u_mouse;
+    uniform vec2 u_wake;
+    uniform float u_mouse_active;
+
+    float hash(vec2 p) {
+      p = fract(p * vec2(234.34, 435.345));
+      p += dot(p, p + 34.23);
+      return fract(p.x * p.y);
+    }
+
+    float smoothNoise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      float a = hash(i);
+      float b = hash(i + vec2(1.0, 0.0));
+      float c = hash(i + vec2(0.0, 1.0));
+      float d = hash(i + vec2(1.0, 1.0));
+      return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+    }
+
+    // 4-octave Fractional Brownian Motion for silky drapery folds
+    float fbm(vec2 p) {
+      float v = 0.0;
+      float a = 0.5;
+      for (int i = 0; i < 4; i++) {
+        v += a * smoothNoise(p);
+        p = p * 2.03 + vec2(0.4, 0.2);
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    // Tall, freely wandering organic auroral curtain
+    // Unanchored: travels across the entire background unpredictably
+    // Tall: span increased to 0.65-0.70 (2.5x vertical height)
+    vec4 tallOrganicCurtain(
+      vec2 uv,
+      vec2 dynamicCenter,
+      float dynamicAngle,
+      float waveSpeed,
+      float freq,
+      float amp,
+      float pleatDensity,
+      float baseRibbonSpan,
+      vec3 deepColor,
+      vec3 crestColor,
+      float time,
+      vec2 mNorm,
+      vec2 wakeNorm,
+      float mActive
+    ) {
+      float aspect = u_resolution.x / u_resolution.y;
+
+      // Aspect-corrected rotation around freely traveling dynamicCenter
+      vec2 p = uv - dynamicCenter;
+      p.x *= aspect;
+      float cosA = cos(dynamicAngle);
+      float sinA = sin(dynamicAngle);
+      vec2 rotP = vec2(
+        cosA * p.x + sinA * p.y,
+        -sinA * p.x + cosA * p.y
+      );
+
+      float u = rotP.x;
+      float v = rotP.y;
+
+      // Responsive fluid cursor disturbance & trailing wake
+      vec2 deltaScreen = vec2((uv.x - mNorm.x) * aspect, uv.y - mNorm.y);
+      float mDist = length(deltaScreen);
+
+      // Broad, organic Gaussian influence radius
+      float influenceRadius = 0.42;
+      float gauss = exp(- (mDist * mDist) / (2.0 * influenceRadius * influenceRadius)) * mActive;
+
+      // Project displacement delta into curtain's local rotated frame (u, v)
+      vec2 rotDelta = vec2(
+        cosA * deltaScreen.x + sinA * deltaScreen.y,
+        -sinA * deltaScreen.x + cosA * deltaScreen.y
+      );
+
+      // 1. Perpendicular push & deflection (visibly pushes and parts the curtain spine)
+      float pushStrength = 0.145;
+      float fluidDeflect = (rotDelta.y / (mDist + 0.12)) * gauss * pushStrength;
+
+      // 2. Tangential warp & ray parting (bends vertical ray pleats around the cursor)
+      float warpStrength = 0.095;
+      float fluidRayWarp = (rotDelta.x / (mDist + 0.14)) * gauss * warpStrength;
+
+      // 3. Trailing fluid wake ripple behind the moving cursor
+      vec2 wakeDelta = vec2((uv.x - wakeNorm.x) * aspect, uv.y - wakeNorm.y);
+      float wakeDist = length(wakeDelta);
+      float wakeGauss = exp(- (wakeDist * wakeDist) / (2.0 * 0.38 * 0.38)) * mActive;
+      float wakeRipple = sin(wakeDist * 14.0 - time * 4.5) * wakeGauss * 0.048;
+
+      // Fluid silk drapery warp across the tall curtain height + cursor ray parting
+      float warp = sin(v * 3.2 - time * (waveSpeed * 0.6)) * 0.045;
+      warp += cos(v * 6.5 + time * (waveSpeed * 0.35)) * 0.020;
+      float uWarped = u + warp + fluidRayWarp;
+
+      // Multi-harmonic traveling wave spine (waves travel through the curtain)
+      float spine = sin(uWarped * freq - time * waveSpeed) * amp;
+      spine += cos(uWarped * (freq * 1.65) + time * (waveSpeed * 0.72)) * (amp * 0.40);
+      spine += sin(uWarped * (freq * 2.8) - time * (waveSpeed * 1.2)) * (amp * 0.16);
+
+      // Organic shape morphing via FBM (morphs the actual curve of the light)
+      float shapeMorph = (fbm(vec2(uWarped * 1.2 + time * 0.08, time * 0.07)) - 0.5) * (amp * 0.95);
+      spine += shapeMorph;
+
+      // Apply physical fluid deflection and trailing wake directly to spine
+      spine += (fluidDeflect + wakeRipple);
+
+      // Distance from the undulating curtain spine
+      float dist = v - spine;
+
+      // Dynamic ribbon height: tall 2.5x vertical span that stretches & breathes
+      float localSpan = baseRibbonSpan * (0.85 + 0.28 * sin(uWarped * (freq * 0.45) - time * (waveSpeed * 0.4)));
+      localSpan *= (0.92 + 0.16 * fbm(vec2(u * 0.8, time * 0.05)));
+
+      // Ribbon boundary limits
+      if (dist < -0.04 || dist > localSpan) {
+        return vec4(0.0);
+      }
+
+      // Tall vertical ray pleats streaming along the curtain
+      float rayFlow = uWarped * pleatDensity + sin(v * 2.8 - time * 0.3) * 0.30 + time * (waveSpeed * 1.3);
+      float rays = fbm(vec2(rayFlow, v * 1.1 - time * 0.18));
+      rays = pow(rays, 1.2) * 1.3;
+
+      // Optical fold thickness where curtain bunches up
+      float folds = 1.0 + abs(cos(uWarped * freq - time * waveSpeed)) * 0.42;
+
+      // Feathered envelope: whisper-thin bottom fade, tall feathered top fade
+      float bottomFade = smoothstep(-0.04, 0.03, dist);
+      float topFade = 1.0 - smoothstep(localSpan * 0.30, localSpan, dist);
+
+      // Intensity envelope
+      float intensity = bottomFade * topFade * (0.24 + 0.76 * rays) * folds;
+
+      // Subdued crimson color progression (no neon)
+      float crestFactor = smoothstep(0.01, localSpan * 0.55, dist) * rays;
+      vec3 col = mix(deepColor, crestColor, clamp(crestFactor, 0.0, 1.0));
+
+      return vec4(col, intensity);
+    }
+
+    void main() {
+      vec2 uv = v_uv;
+
+      // Normalized mouse & wake coordinates
+      vec2 mNorm = u_mouse / u_resolution;
+      mNorm.y = 1.0 - mNorm.y;
+      vec2 wakeNorm = u_wake / u_resolution;
+      wakeNorm.y = 1.0 - wakeNorm.y;
+
+      // Unanchored, non-repeating Lissajous-Brownian trajectories across the entire screen
+      // Incommensurate frequency ratios guarantee free, unpredictable travel (no fixed corners)
+
+      // Curtain 1: Sweeps freely across all quadrants and center
+      vec2 c1_center = vec2(
+        0.50 + 0.55 * (0.52 * sin(u_time * 0.063 + 0.5) + 0.33 * sin(u_time * 0.127 - 1.8) + 0.15 * cos(u_time * 0.203 + 2.1)),
+        0.50 + 0.45 * (0.52 * cos(u_time * 0.051 - 1.2) + 0.33 * cos(u_time * 0.109 + 0.9) + 0.15 * sin(u_time * 0.181 - 0.4))
+      );
+      float c1_angle = -0.38 + 0.32 * sin(u_time * 0.041) + 0.18 * cos(u_time * 0.083 + 1.4);
+
+      // Curtain 2: Wanders diagonally across the entire viewport
+      vec2 c2_center = vec2(
+        0.50 + 0.55 * (0.52 * cos(u_time * 0.057 + 2.3) + 0.33 * sin(u_time * 0.139 + 0.4) - 0.15 * cos(u_time * 0.221 - 1.5)),
+        0.50 + 0.45 * (0.52 * sin(u_time * 0.067 - 0.8) + 0.33 * cos(u_time * 0.117 - 2.1) + 0.15 * sin(u_time * 0.173 + 1.6))
+      );
+      float c2_angle = 0.48 + 0.32 * cos(u_time * 0.047 + 0.7) + 0.18 * sin(u_time * 0.091 - 1.1);
+
+      // Curtain 3: Tall vertical drapery traveling across left, center and right
+      vec2 c3_center = vec2(
+        0.50 + 0.55 * (0.50 * sin(u_time * 0.049 - 1.7) - 0.35 * cos(u_time * 0.111 + 2.6) + 0.15 * sin(u_time * 0.233 + 0.3)),
+        0.50 + 0.45 * (0.50 * cos(u_time * 0.073 + 1.1) + 0.35 * sin(u_time * 0.131 - 0.6) - 0.15 * cos(u_time * 0.197 + 2.0))
+      );
+      float c3_angle = 1.22 + 0.30 * sin(u_time * 0.039 - 0.5) + 0.16 * cos(u_time * 0.077 + 2.2);
+
+      // Curtain 4: Atmospheric swell drifting across top, bottom and mid-sky
+      vec2 c4_center = vec2(
+        0.50 + 0.55 * (0.50 * cos(u_time * 0.061 + 1.4) + 0.35 * sin(u_time * 0.123 - 0.9) + 0.15 * cos(u_time * 0.211 + 0.6)),
+        0.50 + 0.45 * (0.50 * sin(u_time * 0.053 + 2.0) - 0.35 * cos(u_time * 0.119 + 1.3) + 0.15 * sin(u_time * 0.187 - 1.7))
+      );
+      float c4_angle = -0.22 + 0.28 * cos(u_time * 0.043 + 1.8) + 0.15 * sin(u_time * 0.087 - 0.6);
+
+      // Color palettes: deep wine to subdued crimson (brand-harmonized #E32636)
+      vec3 c1_base = vec3(0.24, 0.025, 0.045);
+      vec3 c1_crest = vec3(0.52, 0.065, 0.105);
+
+      vec3 c2_base = vec3(0.20, 0.020, 0.038);
+      vec3 c2_crest = vec3(0.44, 0.052, 0.088);
+
+      vec3 c3_base = vec3(0.16, 0.018, 0.032);
+      vec3 c3_crest = vec3(0.38, 0.042, 0.072);
+
+      vec3 c4_base = vec3(0.14, 0.015, 0.028);
+      vec3 c4_crest = vec3(0.34, 0.036, 0.065);
+
+      // 2.5x taller vertical height (baseRibbonSpan: 0.65, 0.60, 0.68, 0.55)
+      vec4 r1 = tallOrganicCurtain(
+        uv, c1_center, c1_angle, 0.42, 3.4, 0.082, 9.5, 0.65,
+        c1_base, c1_crest, u_time,
+        mNorm, wakeNorm, u_mouse_active
+      );
+
+      vec4 r2 = tallOrganicCurtain(
+        uv, c2_center, c2_angle, 0.36, 2.9, 0.088, 8.0, 0.60,
+        c2_base, c2_crest, u_time + 14.0,
+        mNorm, wakeNorm, u_mouse_active
+      );
+
+      vec4 r3 = tallOrganicCurtain(
+        uv, c3_center, c3_angle, 0.30, 2.4, 0.072, 6.5, 0.68,
+        c3_base, c3_crest, u_time + 28.0,
+        mNorm, wakeNorm, u_mouse_active
+      );
+
+      vec4 r4 = tallOrganicCurtain(
+        uv, c4_center, c4_angle, 0.34, 3.1, 0.065, 7.5, 0.55,
+        c4_base, c4_crest, u_time + 42.0,
+        mNorm, wakeNorm, u_mouse_active
+      );
+
+      // Additive translucent composite onto base space color (#151515)
+      // Balanced weights maintain exact subtle intensity with 2.5x taller curtains
+      vec3 bg = vec3(0.082, 0.082, 0.082); // #151515
+      vec3 auroralLights = r1.rgb * (r1.a * 0.26) +
+                           r2.rgb * (r2.a * 0.22) +
+                           r3.rgb * (r3.a * 0.18) +
+                           r4.rgb * (r4.a * 0.15);
+
+      vec3 finalColor = bg + auroralLights;
+
+      gl_FragColor = vec4(finalColor, 1.0);
+    }
+  `;
+
+  function createShader(glCtx, type, source) {
+    const shader = glCtx.createShader(type);
+    glCtx.shaderSource(shader, source);
+    glCtx.compileShader(shader);
+    if (!glCtx.getShaderParameter(shader, glCtx.COMPILE_STATUS)) {
+      console.warn('Aurora shader error:', glCtx.getShaderInfoLog(shader));
+      glCtx.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+  const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+  if (!vs || !fs) return;
+
+  const program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.warn('Aurora program link error:', gl.getProgramInfoLog(program));
+    return;
+  }
+  gl.useProgram(program);
+
+  // Fullscreen quad buffer
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1, -1, 1, -1, -1, 1,
+    -1, 1, 1, -1, 1, 1
+  ]), gl.STATIC_DRAW);
+
+  const posLoc = gl.getAttribLocation(program, 'a_position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes = gl.getUniformLocation(program, 'u_resolution');
+  const uTime = gl.getUniformLocation(program, 'u_time');
+  const uMouse = gl.getUniformLocation(program, 'u_mouse');
+  const uWake = gl.getUniformLocation(program, 'u_wake');
+  const uMouseActive = gl.getUniformLocation(program, 'u_mouse_active');
+
+  // Internal render scale: 0.5x internal resolution with GPU hardware bilinear upscaling
+  const scale = 0.5;
+
+  function resize() {
+    canvas.width = Math.max(Math.round(window.innerWidth * scale), 320);
+    canvas.height = Math.max(Math.round(window.innerHeight * scale), 240);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+  }
+  resize();
+
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resize, 120);
+  }, { passive: true });
+
+  // Mouse fluid interaction state
+  let targetMouseX = canvas.width * 0.5;
+  let targetMouseY = canvas.height * 0.5;
+  let mouseX = targetMouseX;
+  let mouseY = targetMouseY;
+  let wakeX = targetMouseX;
+  let wakeY = targetMouseY;
+  let targetActive = 0;
+  let mouseActive = 0;
+  let idleTimer = null;
+
+  function onPointerMove(e) {
+    if (isCoarse) return;
+    targetMouseX = e.clientX * scale;
+    targetMouseY = e.clientY * scale;
+    targetActive = 1.0;
+
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      targetActive = 0.0;
+    }, 1800);
+  }
+
+  function onPointerLeave() {
+    targetActive = 0.0;
+    clearTimeout(idleTimer);
+  }
+
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
+  document.addEventListener('mouseleave', onPointerLeave, { passive: true });
+
+  let rafId = null;
+  let lastTime = performance.now();
+
+  function render(currentTime) {
+    const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
+    lastTime = currentTime;
+
+    // Responsive activation (fast pickup on move, graceful relaxation on idle)
+    if (targetActive > mouseActive) {
+      mouseActive += (targetActive - mouseActive) * Math.min(dt * 8.0, 1.0);
+    } else {
+      mouseActive += (targetActive - mouseActive) * (1 - Math.exp(-dt * 2.2));
+    }
+
+    // Responsive position tracking (follows cursor crisply without sluggishness)
+    mouseX += (targetMouseX - mouseX) * (1 - Math.exp(-dt * 12.0));
+    mouseY += (targetMouseY - mouseY) * (1 - Math.exp(-dt * 12.0));
+
+    // Trailing wake position (slower follow, creates soft fluid trailing wake ripple)
+    wakeX += (mouseX - wakeX) * (1 - Math.exp(-dt * 3.5));
+    wakeY += (mouseY - wakeY) * (1 - Math.exp(-dt * 3.5));
+
+    gl.uniform1f(uTime, currentTime * 0.001);
+    gl.uniform2f(uMouse, mouseX, mouseY);
+    gl.uniform2f(uWake, wakeX, wakeY);
+    gl.uniform1f(uMouseActive, mouseActive);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    rafId = requestAnimationFrame(render);
+  }
+
+  function start() {
+    if (rafId || motionQuery.matches) return;
+    lastTime = performance.now();
+    rafId = requestAnimationFrame(render);
+  }
+
+  function stop() {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  // Accessibility: static render for reduced motion
+  function renderStaticFrame() {
+    stop();
+    gl.uniform1f(uTime, 5.0);
+    gl.uniform2f(uMouse, canvas.width * 0.5, canvas.height * 0.5);
+    gl.uniform2f(uWake, canvas.width * 0.5, canvas.height * 0.5);
+    gl.uniform1f(uMouseActive, 0.0);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+
+  motionQuery.addEventListener('change', (e) => {
+    if (e.matches) {
+      renderStaticFrame();
+    } else {
+      start();
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stop();
+    } else if (!motionQuery.matches) {
+      start();
+    }
+  });
+
+  if (motionQuery.matches) {
+    renderStaticFrame();
+  } else {
+    start();
+  }
+}
+
+/**
+ * Graceful 2D Canvas Fallback (for environments without WebGL)
+ */
+function init2DAuroraFallback(canvas, motionQuery, isCoarse) {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+
+  function drawStaticFallback() {
+    ctx.fillStyle = '#151515';
+    ctx.fillRect(0, 0, width, height);
+
+    // Diagonal sweep from upper-left toward center
+    const grad1 = ctx.createLinearGradient(0, 0, width * 0.8, height * 0.7);
+    grad1.addColorStop(0, 'rgba(21, 21, 21, 0)');
+    grad1.addColorStop(0.35, 'rgba(165, 24, 34, 0.14)');
+    grad1.addColorStop(0.7, 'rgba(110, 15, 24, 0.06)');
+    grad1.addColorStop(1, 'rgba(21, 21, 21, 0)');
+    ctx.fillStyle = grad1;
+    ctx.fillRect(0, 0, width, height);
+
+    // Ascending sweep from lower-left toward upper-right
+    const grad2 = ctx.createLinearGradient(0, height, width, height * 0.3);
+    grad2.addColorStop(0, 'rgba(21, 21, 21, 0)');
+    grad2.addColorStop(0.4, 'rgba(140, 20, 30, 0.10)');
+    grad2.addColorStop(1, 'rgba(21, 21, 21, 0)');
+    ctx.fillStyle = grad2;
+    ctx.fillRect(0, 0, width, height);
+
+    // Tall drapery on the right
+    const grad3 = ctx.createLinearGradient(width * 0.7, 0, width, height);
+    grad3.addColorStop(0, 'rgba(21, 21, 21, 0)');
+    grad3.addColorStop(0.5, 'rgba(125, 18, 28, 0.09)');
+    grad3.addColorStop(1, 'rgba(21, 21, 21, 0)');
+    ctx.fillStyle = grad3;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  drawStaticFallback();
 }
 

@@ -29,7 +29,7 @@
   /* Text & Foreground */
   --color-text-primary: #FFFFFF;
   --color-text-secondary: #929292;
-  --color-text-tertiary: #6E6E76;
+  --color-text-tertiary: #8E8E96;
   --color-text-inverse: #151515;
 
   /* State & Utility Colors */
@@ -99,6 +99,15 @@
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Motion & Animation Tokens */
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-fast: 0.18s;
+  --duration-normal: 0.3s;
+  --duration-reveal: 0.4s;
+  --duration-entrance: 0.45s;
 
   /* Z-index layering */
   --z-nav: 100;
